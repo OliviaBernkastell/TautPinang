@@ -1,38 +1,31 @@
-# Use a PHP 8.3 FPM + Nginx base image suitable for Laravel
-FROM serversideup/php:8.3-fpm-nginx
+# Use official PHP 8.3 FPM image suitable for Laravel
+FROM php:8.3-fpm
 
-# Enable debugging extensions
+# Install system dependencies for Laravel and debugging tools
 RUN apt-get update && apt-get install -y \
-    vim curl git unzip zip \
-    && pecl install xdebug \
-    && docker-php-ext-enable xdebug
+    git unzip zip curl vim \
+    libzip-dev libonig-dev libpng-dev libpq-dev \
+    && docker-php-ext-install pdo pdo_mysql zip mbstring exif pcntl bcmath gd
 
-# Set up Xdebug configuration for remote debugging
-RUN echo "zend_extension=xdebug.so" > /usr/local/etc/php/conf.d/xdebug.ini \
-    && echo "xdebug.mode=debug" >> /usr/local/etc/php/conf.d/xdebug.ini \
-    && echo "xdebug.start_with_request=yes" >> /usr/local/etc/php/conf.d/xdebug.ini \
-    && echo "xdebug.client_host=host.docker.internal" >> /usr/local/etc/php/conf.d/xdebug.ini \
-    && echo "xdebug.client_port=9003" >> /usr/local/etc/php/conf.d/xdebug.ini
-
-# Install Node.js and npm for frontend asset building and debugging
-RUN curl -sL https://deb.nodesource.com/setup_20.x | bash - && apt-get install -y nodejs
+# Install Composer globally
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 # Set working directory
 WORKDIR /var/www/html
 
-# Copy all app files and set permissions suitable for Laravel
-COPY --chown=www-data:www-data . /var/www/html
+# Copy application files
+COPY . .
 
-# Install PHP dependencies without optimizing for faster build during debugging
-USER www-data
+# Install PHP dependencies (no optimization for faster rebuilds)
 RUN composer install
 
-# Install npm packages and build frontend assets
+# Install npm and node for asset building if needed
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && apt-get install -y nodejs
 RUN npm install
 RUN npm run dev
 
-# Expose port 80 for web server
-EXPOSE 8080
+# Expose port 9000 for PHP-FPM
+EXPOSE 9000
 
-# Start PHP-FPM and Nginx in foreground for debugging
-CMD ["sh", "-c", "php-fpm && nginx -g 'daemon off;'"]
+# Run php-fpm server for Laravel
+CMD ["php-fpm"]
