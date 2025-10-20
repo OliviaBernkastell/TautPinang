@@ -1,33 +1,38 @@
-# Use an official PHP 8.3 FPM image with necessary extensions
-FROM php:8.3-fpm
+# Use a PHP 8.3 FPM + Nginx base image suitable for Laravel
+FROM serversideup/php:8.3-fpm-nginx
 
-# Install system dependencies for Laravel and Composer
+# Enable debugging extensions
 RUN apt-get update && apt-get install -y \
-    libzip-dev zip unzip git curl libpng-dev libonig-dev libxml2-dev \
-    && docker-php-ext-install pdo_mysql zip mbstring exif pcntl bcmath gd \
-    && apt-get clean && rm -rf /var/lib/apt/lists/*
+    vim curl git unzip zip \
+    && pecl install xdebug \
+    && docker-php-ext-enable xdebug
 
-# Install Composer globally
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+# Set up Xdebug configuration for remote debugging
+RUN echo "zend_extension=xdebug.so" > /usr/local/etc/php/conf.d/xdebug.ini \
+    && echo "xdebug.mode=debug" >> /usr/local/etc/php/conf.d/xdebug.ini \
+    && echo "xdebug.start_with_request=yes" >> /usr/local/etc/php/conf.d/xdebug.ini \
+    && echo "xdebug.client_host=host.docker.internal" >> /usr/local/etc/php/conf.d/xdebug.ini \
+    && echo "xdebug.client_port=9003" >> /usr/local/etc/php/conf.d/xdebug.ini
+
+# Install Node.js and npm for frontend asset building and debugging
+RUN curl -sL https://deb.nodesource.com/setup_20.x | bash - && apt-get install -y nodejs
 
 # Set working directory
 WORKDIR /var/www/html
 
-# Copy only composer files first to leverage Docker cache
-COPY composer.json composer.lock ./
+# Copy all app files and set permissions suitable for Laravel
+COPY --chown=www-data:www-data . /var/www/html
 
-# Install PHP dependencies without dev dependencies
-RUN composer install --no-dev --optimize-autoloader --no-interaction
+# Install PHP dependencies without optimizing for faster build during debugging
+USER www-data
+RUN composer install
 
-# Copy all app files
-COPY . .
+# Install npm packages and build frontend assets
+RUN npm install
+RUN npm run dev
 
-# Set file permissions for Laravel storage and bootstrap cache
-RUN chown -R www-data:www-data storage bootstrap/cache \
-    && chmod -R 775 storage bootstrap/cache
+# Expose port 80 for web server
+EXPOSE 8080
 
-# Expose port 9000 (for PHP-FPM)
-EXPOSE 9000
-
-# Entry point command for PHP-FPM
-CMD ["php-fpm"]
+# Start PHP-FPM and Nginx in foreground for debugging
+CMD ["sh", "-c", "php-fpm && nginx -g 'daemon off;'"]
