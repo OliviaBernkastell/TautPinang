@@ -1,15 +1,15 @@
-FROM php:8.2-apache
+FROM serversideup/php:8.3-fpm-nginx
 
-# Copy app files
-COPY . /var/www/html/
+ENV PHP_OPCACHE_ENABLE=1
 
-# Set correct permissions
-RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 755 /var/www/html
+USER root
+RUN curl -sL https://deb.nodesource.com/setup_20.x | bash -
+RUN apt-get install -y nodejs
 
-# Enable Apache mod_rewrite (if needed)
-RUN a2enmod rewrite \
-    && echo "ServerName localhost" >> /etc/apache2/apache2.conf
+COPY --chown=www-data:www-data . /var/www/html
+WORKDIR /var/www/html
 
-# Expose port
-EXPOSE 80
+USER www-data
+RUN npm install
+RUN npm run build
+RUN composer install --no-interaction --optimize-autoloader --no-dev
