@@ -1,5 +1,11 @@
 # Stage 1: Node.js build for frontend assets
-FROM node:20-alpine AS node-builder
+FROM serversideup/php:8.3-fpm-nginx
+ENV PHP_OPCACHE_ENABLE=1
+USER root
+RUN curl -sL https://deb.nodesource.com/setup_20.x | bash -
+RUN apt-get install -y nodejs
+COPY --chown=www-data:www-data . /var/www/html
+USER www-data
 
 WORKDIR /app
 
@@ -16,19 +22,15 @@ COPY . .
 RUN npm run build
 
 # Stage 2: PHP dependencies
-FROM composer:2.8.4 AS composer-builder
-
 WORKDIR /app
 
 COPY composer.json composer.lock ./
-RUN composer install --no-dev --no-scripts --no-autoloader --prefer-dist
+RUN composer install --no-interaction --optimize-autoloader --no-dev --prefer-dist
 
 COPY . .
 RUN composer dump-autoload --optimize --no-dev
 
 # Stage 3: Production image
-FROM php:8.3-fpm
-
 # Install system dependencies and PHP extensions
 RUN apt-get update && apt-get install -y --no-install-recommends \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
