@@ -48,6 +48,3 @@ RUN chown -R www-data:www-data /var/www/html \
 
 # Configure Nginx
 COPY docker/nginx.conf /etc/nginx/sites-available/default
-
-# Configure Supervisor
-COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
