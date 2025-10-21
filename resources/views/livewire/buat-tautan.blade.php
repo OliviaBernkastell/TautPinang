@@ -393,10 +393,10 @@
                             <div class="space-y-3">
                                 <input type="text" wire:model.debounce.300ms="footerText1"
                                     class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    placeholder="© 2025 Taut Pinang. Semua hak dilindungi.">
+                                    placeholder="© 2025 Made with ❤ BPS Kota Tanjungpinang -">
                                 <input type="text" wire:model.debounce.300ms="footerText2"
                                     class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    placeholder="Karya BPS Kota Tanjungpinang">
+                                    placeholder="BPS Provinsi Kepulauan Riau">
                             </div>
                         </div>
 
@@ -1786,7 +1786,7 @@
                 </div>
 
                 <!-- Bagian Live Preview dengan Toggle Mobile/Desktop + Fullscreen -->
-                <div class="lg:sticky lg:top-24" style="height: fit-content;" x-data="{
+                <div class="sticky top-0 z-10" style="height: fit-content;" x-data="{
                     viewMode: 'mobile',
                     isFullscreen: false,
                     toggleFullscreen() {

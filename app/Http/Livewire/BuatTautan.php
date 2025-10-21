@@ -182,8 +182,8 @@ class BuatTautan extends Component
         $this->deskripsi = 'Badan Pusat Statistik Kota Tanjungpinang - Satu Data Untuk Semua';
         $this->slug = 'bps-tanjungpinang';
 
-        $this->footerText1 = '© 2025 Taut Pinang. Semua hak dilindungi.';
-        $this->footerText2 = 'Karya BPS Kota Tanjungpinang';
+        $this->footerText1 = '© 2025 Made with ❤ BPS Kota Tanjungpinang -';
+        $this->footerText2 = 'BPS Provinsi Kepulauan Riau';
 
         $this->links = [
             [
@@ -1153,7 +1153,7 @@ class BuatTautan extends Component
         return $qrUrl;
     }
 
-      private function buildOgTags($title, $description, $slug, $imageUrl)
+    private function buildOgTags($title, $description, $slug, $imageUrl)
     {
         $url = "https://bps2172.github.io/TautPinang/{$slug}.html";
         $titleWithBranding = "{$title} | Taut Pinang";
@@ -1969,7 +1969,7 @@ Author: BPS Kota Tanjungpinang
             font-size: {$footer['fontSize']}px;
         }
 
-        
+
         @media (max-width: 768px) {
             #qr-code-container {
                 display: none !important;
@@ -2255,8 +2255,8 @@ Author: BPS Kota Tanjungpinang
 
         $this->resetStylesToDefault();
         $this->logoUrl = 'https://i.pinimg.com/474x/e4/8a/b2/e48ab2e2e8055f15f04caf6968c1314a.jpg';
-        $this->footerText1 = '© 2025 Taut Pinang. Semua hak dilindungi.';
-        $this->footerText2 = 'Karya BPS Kota Tanjungpinang';
+        $this->footerText1 = '© 2025 Made with ❤ BPS Kota Tanjungpinang -';
+        $this->footerText2 = 'BPS Provinsi Kepulauan Riau';
 
         $this->addLink();
         $this->generatePreview();
