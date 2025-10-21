@@ -45,6 +45,3 @@ COPY --from=node-builder /app/public/build /var/www/html/public/build
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html/storage \
     && chmod -R 755 /var/www/html/bootstrap/cache
-
-# Configure Nginx
-COPY docker/nginx.conf /etc/nginx/sites-available/default
