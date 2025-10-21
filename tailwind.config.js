@@ -8,7 +8,7 @@ module.exports = {
         './storage/framework/views/*.php',
         './resources/views/**/*.blade.php',
     ],
-
+    darkMode: false, // disable dark mode
     theme: {
         extend: {
             fontFamily: {
