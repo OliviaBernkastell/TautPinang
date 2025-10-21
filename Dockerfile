@@ -29,7 +29,9 @@ RUN composer dump-autoload --optimize --no-dev
 # Stage 3: Production image
 FROM php:8.3-fpm
 
-RUN apt-get install -y nodejs
+# Install system dependencies and PHP extensions
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Copy PHP production config
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
