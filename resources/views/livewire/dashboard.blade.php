@@ -446,72 +446,74 @@
     });
 
     // p5.js background: partikel lembut warna biru–hijau dengan pergerakan halus
-    new p5((p) => {
-        let particles = [];
-        const COUNT = 40;
-        let canvasParent;
-
-        class Particle {
-            constructor() {
-                this.reset(true);
-            }
-            reset(init = false) {
-                this.x = p.random(p.width);
-                this.y = p.random(p.height);
-                this.r = p.random(40, 120);
-                this.ax = p.random(0.2, 0.6) * (p.random() < 0.5 ? -1 : 1);
-                this.ay = p.random(0.2, 0.6) * (p.random() < 0.5 ? -1 : 1);
-                this.alpha = init ? 0 : p.random(60, 120);
-                this.targetAlpha = p.random(60, 120);
-                this.hue = p.random(180, 210); // spektrum biru-hijau
-            }
-            update() {
-                this.x += this.ax * 0.3;
-                this.y += this.ay * 0.3;
-
-                // pantulan lembut
-                if (this.x < -this.r || this.x > p.width + this.r || this.y < -this.r || this.y > p.height +
-                    this.r) {
-                    this.reset();
-                    this.x = p.constrain(this.x, 0, p.width);
-                    this.y = p.constrain(this.y, 0, p.height);
+    window.addEventListener('load', function() {    // p5 is guaranteed to be loaded here
+        new p5((p) => {
+            let particles = [];
+            const COUNT = 40;
+            let canvasParent;
+    
+            class Particle {
+                constructor() {
+                    this.reset(true);
                 }
-
-                // easing alpha
-                this.alpha += (this.targetAlpha - this.alpha) * 0.02;
+                reset(init = false) {
+                    this.x = p.random(p.width);
+                    this.y = p.random(p.height);
+                    this.r = p.random(40, 120);
+                    this.ax = p.random(0.2, 0.6) * (p.random() < 0.5 ? -1 : 1);
+                    this.ay = p.random(0.2, 0.6) * (p.random() < 0.5 ? -1 : 1);
+                    this.alpha = init ? 0 : p.random(60, 120);
+                    this.targetAlpha = p.random(60, 120);
+                    this.hue = p.random(180, 210); // spektrum biru-hijau
+                }
+                update() {
+                    this.x += this.ax * 0.3;
+                    this.y += this.ay * 0.3;
+    
+                    // pantulan lembut
+                    if (this.x < -this.r || this.x > p.width + this.r || this.y < -this.r || this.y > p.height +
+                        this.r) {
+                        this.reset();
+                        this.x = p.constrain(this.x, 0, p.width);
+                        this.y = p.constrain(this.y, 0, p.height);
+                    }
+    
+                    // easing alpha
+                    this.alpha += (this.targetAlpha - this.alpha) * 0.02;
+                }
+                draw() {
+                    p.noStroke();
+                    p.fill(this.hue, 60, 85, this.alpha);
+                    p.circle(this.x, this.y, this.r);
+                }
             }
-            draw() {
+    
+            p.setup = function() {
+                canvasParent = document.getElementById('bg-canvas');
+                const c = p.createCanvas(canvasParent.clientWidth, canvasParent.clientHeight);
+                c.parent(canvasParent);
+                p.colorMode(p.HSL, 360, 100, 100, 255);
+                for (let i = 0; i < COUNT; i++) particles.push(new Particle());
+                p.noiseSeed(Math.floor(Math.random() * 10000));
+            };
+    
+            p.windowResized = function() {
+                p.resizeCanvas(canvasParent.clientWidth, canvasParent.clientHeight);
+            };
+    
+            p.draw = function() {
+                // background transparan tipis agar menyatu dengan card
+                p.clear();
+                // layer kabut lembut
                 p.noStroke();
-                p.fill(this.hue, 60, 85, this.alpha);
-                p.circle(this.x, this.y, this.r);
-            }
-        }
-
-        p.setup = function() {
-            canvasParent = document.getElementById('bg-canvas');
-            const c = p.createCanvas(canvasParent.clientWidth, canvasParent.clientHeight);
-            c.parent(canvasParent);
-            p.colorMode(p.HSL, 360, 100, 100, 255);
-            for (let i = 0; i < COUNT; i++) particles.push(new Particle());
-            p.noiseSeed(Math.floor(Math.random() * 10000));
-        };
-
-        p.windowResized = function() {
-            p.resizeCanvas(canvasParent.clientWidth, canvasParent.clientHeight);
-        };
-
-        p.draw = function() {
-            // background transparan tipis agar menyatu dengan card
-            p.clear();
-            // layer kabut lembut
-            p.noStroke();
-            p.fill(200, 50, 96, 30);
-            p.rect(0, 0, p.width, p.height);
-
-            particles.forEach(pt => {
-                pt.update();
-                pt.draw();
-            });
-        };
-    }, 'bg-canvas');
+                p.fill(200, 50, 96, 30);
+                p.rect(0, 0, p.width, p.height);
+    
+                particles.forEach(pt => {
+                    pt.update();
+                    pt.draw();
+                });
+            };
+        }, 'bg-canvas');
+    });
 </script>
