@@ -16,7 +16,7 @@ COPY . .
 RUN npm run build
 
 # Stage 2: PHP dependencies
-FROM composer:2 AS composer-builder
+FROM composer:2.8.4 AS composer-builder
 
 WORKDIR /app
 
