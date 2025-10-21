@@ -38,7 +38,6 @@
                                 </span>
                             </h1>
                             <p class="text-xl font-light text-gray-600">Website Pembuat Tautan</p>
-                            <p class="text-lg text-emerald-600">BPS Kota Tanjungpinang</p>
                         </div>
 
                         <!-- Features -->

@@ -312,13 +312,17 @@
                                                 placeholder="https://example.com">
 
                                             <!-- Toggle untuk Custom Styling -->
-                                            <div class="flex items-center gap-2 p-2 mt-3 border border-blue-200 rounded-lg bg-blue-50">
+                                            <div
+                                                class="flex items-center gap-2 p-2 mt-3 border border-blue-200 rounded-lg bg-blue-50">
                                                 <label class="flex items-center cursor-pointer">
                                                     <input type="checkbox"
                                                         wire:model.debounce.500ms="links.{{ $index }}.enableCustomStyling"
                                                         class="sr-only peer">
-                                                    <div class="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                                                    <span class="ml-3 text-sm font-medium text-gray-700">Gunakan Style Kustom</span>
+                                                    <div
+                                                        class="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600">
+                                                    </div>
+                                                    <span class="ml-3 text-sm font-medium text-gray-700">Gunakan Style
+                                                        Kustom</span>
                                                 </label>
                                             </div>
 
@@ -326,32 +330,36 @@
                                             @if ($link['enableCustomStyling'] ?? false)
                                                 <div class="flex gap-2 mt-2">
                                                     <div class="flex-1">
-                                                        <label class="block mb-1 text-xs font-medium text-gray-600">Warna Background</label>
-                                                    <div class="flex items-center gap-2">
-                                                        <input type="color"
-                                                            wire:model.debounce.500ms="links.{{ $index }}.backgroundColor"
-                                                            class="h-8 border border-gray-300 rounded cursor-pointer"
-                                                            value="{{ $link['backgroundColor'] ?? '#FFFFFF' }}">
-                                                        <input type="text"
-                                                            wire:model.debounce.500ms="links.{{ $index }}.backgroundColor"
-                                                            class="flex-1 px-2 py-1 text-xs border border-gray-300 rounded"
-                                                            placeholder="#FFFFFF">
+                                                        <label
+                                                            class="block mb-1 text-xs font-medium text-gray-600">Warna
+                                                            Background</label>
+                                                        <div class="flex items-center gap-2">
+                                                            <input type="color"
+                                                                wire:model.debounce.500ms="links.{{ $index }}.backgroundColor"
+                                                                class="h-8 border border-gray-300 rounded cursor-pointer"
+                                                                value="{{ $link['backgroundColor'] ?? '#FFFFFF' }}">
+                                                            <input type="text"
+                                                                wire:model.debounce.500ms="links.{{ $index }}.backgroundColor"
+                                                                class="flex-1 px-2 py-1 text-xs border border-gray-300 rounded"
+                                                                placeholder="#FFFFFF">
+                                                        </div>
+                                                    </div>
+                                                    <div class="flex-1">
+                                                        <label
+                                                            class="block mb-1 text-xs font-medium text-gray-600">Warna
+                                                            Teks</label>
+                                                        <div class="flex items-center gap-2">
+                                                            <input type="color"
+                                                                wire:model.debounce.500ms="links.{{ $index }}.textColor"
+                                                                class="h-8 border border-gray-300 rounded cursor-pointer"
+                                                                value="{{ $link['textColor'] ?? '#002366' }}">
+                                                            <input type="text"
+                                                                wire:model.debounce.500ms="links.{{ $index }}.textColor"
+                                                                class="flex-1 px-2 py-1 text-xs border border-gray-300 rounded"
+                                                                placeholder="#002366">
+                                                        </div>
                                                     </div>
                                                 </div>
-                                                <div class="flex-1">
-                                                    <label class="block mb-1 text-xs font-medium text-gray-600">Warna Teks</label>
-                                                    <div class="flex items-center gap-2">
-                                                        <input type="color"
-                                                            wire:model.debounce.500ms="links.{{ $index }}.textColor"
-                                                            class="h-8 border border-gray-300 rounded cursor-pointer"
-                                                            value="{{ $link['textColor'] ?? '#002366' }}">
-                                                        <input type="text"
-                                                            wire:model.debounce.500ms="links.{{ $index }}.textColor"
-                                                            class="flex-1 px-2 py-1 text-xs border border-gray-300 rounded"
-                                                            placeholder="#002366">
-                                                    </div>
-                                                </div>
-                                            </div>
                                             @endif
                                         </div>
                                         <button type="button" wire:click="removeLink({{ $index }})"
@@ -385,10 +393,10 @@
                             <div class="space-y-3">
                                 <input type="text" wire:model.debounce.300ms="footerText1"
                                     class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    placeholder="© 2025 Taut Pinang. Semua hak dilindungi.">
+                                    placeholder="© 2025 Made with ❤ BPS Kota Tanjungpinang -">
                                 <input type="text" wire:model.debounce.300ms="footerText2"
                                     class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    placeholder="Karya BPS Kota Tanjungpinang">
+                                    placeholder="BPS Provinsi Kepulauan Riau">
                             </div>
                         </div>
 
@@ -1369,8 +1377,7 @@
                                                     <span class="text-xs text-gray-400">(px)</span></label>
                                                 <input type="number" wire:model.lazy="styles.footer.fontSize"
                                                     class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                                    min="8" max="20" step="1"
-                                                    placeholder="12">
+                                                    min="8" max="20" step="1" placeholder="12">
                                             </div>
                                         </div>
 
@@ -1455,7 +1462,8 @@
                                             <!-- Info Default Warna -->
                                             <div
                                                 class="p-3 text-sm text-gray-700 border border-gray-200 rounded-lg bg-gray-50">
-                                                <strong>🎨 Warna Default:</strong> Background QR putih, Border Container putih, QR Code hitam (standard).
+                                                <strong>🎨 Warna Default:</strong> Background QR putih, Border Container
+                                                putih, QR Code hitam (standard).
                                             </div>
 
                                             <!-- Position & Size -->
@@ -1512,8 +1520,8 @@
                                                 <div class="space-y-4">
                                                     <!-- Background QR Color - LIVESTREAM BINDING -->
                                                     <div>
-                                                        <label
-                                                            class="block mb-2 text-sm font-medium text-gray-600">🎨 Background QR</label>
+                                                        <label class="block mb-2 text-sm font-medium text-gray-600">🎨
+                                                            Background QR</label>
                                                         <div class="p-3 border border-gray-300 rounded-lg bg-gray-50">
                                                             <div class="flex items-center gap-2 mb-2">
                                                                 <input type="color"
@@ -1522,14 +1530,17 @@
                                                                     class="w-12 h-12 border-2 border-gray-300 rounded-lg cursor-pointer">
                                                                 <div class="flex-1">
                                                                     <label class="block mb-1 text-xs text-gray-600">
-                                                                        Warna HEX: <span class="font-mono">{{ $qrBackgroundColorPicker ?? '#FFFFFF' }}</span>
+                                                                        Warna HEX: <span
+                                                                            class="font-mono">{{ $qrBackgroundColorPicker ?? '#FFFFFF' }}</span>
                                                                     </label>
                                                                     <label class="block mb-1 text-xs text-gray-600">
-                                                                        Transparansi: <span>{{ $qrBackgroundOpacity ?? 100 }}%</span>
+                                                                        Transparansi:
+                                                                        <span>{{ $qrBackgroundOpacity ?? 100 }}%</span>
                                                                     </label>
                                                                     <input type="range"
                                                                         wire:model.live="qrBackgroundOpacity"
-                                                                        min="0" max="100" value="100"
+                                                                        min="0" max="100"
+                                                                        value="100"
                                                                         class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider">
                                                                 </div>
                                                             </div>
@@ -1543,7 +1554,8 @@
                                                     <!-- Border Container Color - LIVESTREAM BINDING -->
                                                     <div>
                                                         <label
-                                                            class="block mb-2 text-sm font-medium text-gray-600">🏷️ Border Container</label>
+                                                            class="block mb-2 text-sm font-medium text-gray-600">🏷️
+                                                            Border Container</label>
                                                         <div class="p-3 border border-gray-300 rounded-lg bg-gray-50">
                                                             <div class="flex items-center gap-2 mb-2">
                                                                 <input type="color"
@@ -1552,14 +1564,17 @@
                                                                     class="w-12 h-12 border-2 border-gray-300 rounded-lg cursor-pointer">
                                                                 <div class="flex-1">
                                                                     <label class="block mb-1 text-xs text-gray-600">
-                                                                        Warna HEX: <span class="font-mono">{{ $qrBorderColorPicker ?? '#FFFFFF' }}</span>
+                                                                        Warna HEX: <span
+                                                                            class="font-mono">{{ $qrBorderColorPicker ?? '#FFFFFF' }}</span>
                                                                     </label>
                                                                     <label class="block mb-1 text-xs text-gray-600">
-                                                                        Transparansi: <span>{{ $qrBorderOpacity ?? 100 }}%</span>
+                                                                        Transparansi:
+                                                                        <span>{{ $qrBorderOpacity ?? 100 }}%</span>
                                                                     </label>
                                                                     <input type="range"
                                                                         wire:model.live="qrBorderOpacity"
-                                                                        min="0" max="100" value="100"
+                                                                        min="0" max="100"
+                                                                        value="100"
                                                                         class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider">
                                                                 </div>
                                                             </div>
@@ -1572,8 +1587,8 @@
 
                                                     <!-- Pattern QR Color - LIVESTREAM BINDING -->
                                                     <div>
-                                                        <label
-                                                            class="block mb-2 text-sm font-medium text-gray-600">🔲 Pattern QR Code</label>
+                                                        <label class="block mb-2 text-sm font-medium text-gray-600">🔲
+                                                            Pattern QR Code</label>
                                                         <div class="p-3 border border-gray-300 rounded-lg bg-gray-50">
                                                             <div class="flex items-center gap-2 mb-2">
                                                                 <input type="color"
@@ -1582,14 +1597,17 @@
                                                                     class="w-12 h-12 border-2 border-gray-300 rounded-lg cursor-pointer">
                                                                 <div class="flex-1">
                                                                     <label class="block mb-1 text-xs text-gray-600">
-                                                                        Warna HEX: <span class="font-mono">{{ $qrDarkColorPicker ?? '#000000' }}</span>
+                                                                        Warna HEX: <span
+                                                                            class="font-mono">{{ $qrDarkColorPicker ?? '#000000' }}</span>
                                                                     </label>
                                                                     <label class="block mb-1 text-xs text-gray-600">
-                                                                        Transparansi: <span>{{ $qrDarkOpacity ?? 100 }}%</span>
+                                                                        Transparansi:
+                                                                        <span>{{ $qrDarkOpacity ?? 100 }}%</span>
                                                                     </label>
                                                                     <input type="range"
                                                                         wire:model.live="qrDarkOpacity"
-                                                                        min="0" max="100" value="100"
+                                                                        min="0" max="100"
+                                                                        value="100"
                                                                         class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider">
                                                                 </div>
                                                             </div>
@@ -1615,8 +1633,10 @@
                                                 class="p-3 text-xs text-gray-600 border border-blue-200 rounded-lg bg-blue-50">
                                                 <strong>✨ Default:</strong> Shadow effect dan hover zoom sudah aktif. QR
                                                 Code hidden di mobile. <br>
-                                                <strong>🎨 Full Controls:</strong> Gunakan warna HEX + transparansi (0-100%) untuk semua kontrol QR. <br>
-                                                <strong>✅ YA BISA!:</strong> Transparansi sudah bisa diatur untuk semua 3 warna QR!
+                                                <strong>🎨 Full Controls:</strong> Gunakan warna HEX + transparansi
+                                                (0-100%) untuk semua kontrol QR. <br>
+                                                <strong>✅ YA BISA!:</strong> Transparansi sudah bisa diatur untuk semua
+                                                3 warna QR!
                                             </div>
                                         </div>
                                     </div>
@@ -1700,7 +1720,8 @@
                                         d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3-3m0 0l-3 3m3-3v12">
                                     </path>
                                 </svg>
-                                <span wire:loading.remove wire:target="updateToDatabase">💾 Update & Publikasikan</span>
+                                <span wire:loading.remove wire:target="updateToDatabase">💾 Update &
+                                    Publikasikan</span>
                                 <span wire:loading wire:target="updateToDatabase">Menyimpan...</span>
                             </button>
                         </div>
@@ -1708,7 +1729,7 @@
                 </div>
 
                 <!-- Bagian Live Preview dengan Toggle Mobile/Desktop + Fullscreen -->
-                <div class="lg:sticky lg:top-24" style="height: fit-content;" x-data="{
+                <div class="sticky top-0 z-10" style="height: fit-content;" x-data="{
                     viewMode: 'mobile',
                     isFullscreen: false,
                     toggleFullscreen() {
@@ -1799,8 +1820,7 @@
                                     <div
                                         class="absolute top-12 bottom-12 left-4 right-4 bg-white rounded-[20px] overflow-hidden">
                                         <iframe id="previewFrame" srcdoc="{{ $this->previewHtml }}"
-                                            class="w-full h-full"
-                                            style="border: none;"></iframe>
+                                            class="w-full h-full" style="border: none;"></iframe>
                                     </div>
                                 </div>
                             </div>
