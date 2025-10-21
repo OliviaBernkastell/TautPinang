@@ -27,7 +27,7 @@ COPY . .
 RUN composer dump-autoload --optimize --no-dev
 
 # Stage 3: Production image
-FROM php:8.2-fpm
+FROM php:8.3-fpm
 
 RUN apt-get install -y nodejs
 
@@ -45,3 +45,9 @@ COPY --from=node-builder /app/public/build /var/www/html/public/build
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html/storage \
     && chmod -R 755 /var/www/html/bootstrap/cache
+
+# Configure Nginx
+COPY docker/nginx.conf /etc/nginx/sites-available/default
+
+# Configure Supervisor
+COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
