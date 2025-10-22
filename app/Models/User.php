@@ -63,7 +63,6 @@ class User extends Authenticatable
      */
     protected $appends = [
         'profile_photo_url',
-        'is_admin', // untuk compatibility dengan kode yang mungkin sudah ada
         'role_display',
     ];
 
@@ -163,7 +162,7 @@ class User extends Authenticatable
      */
     public function getActiveTautanCountAttribute()
     {
-        return $this->tautan()->where('status', 'active')->count();
+        return $this->tautan()->where('is_active', true)->count();
     }
 
     /**

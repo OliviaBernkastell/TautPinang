@@ -32,8 +32,8 @@ class CheckTautanStatus
             return $next($request);
         }
 
-        // Check if tautan status is NOT active
-        if ($tautan->status !== 'active') {
+        // Check if tautan is NOT active
+        if (!$tautan->is_active) {
             // Simple return 404 using correct view path
             return response()->view('tautan.404', [], 404);
         }

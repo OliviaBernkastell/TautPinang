@@ -198,7 +198,7 @@ class EditTautan extends Component
             ->first();
 
         if (!$tautan) {
-            session()->flash('error', 'Tautan tidak ditemukan atau Anda tidak memiliki akses.');
+            session()->flash('error', 'Hanya pembuat tautan yang dapat mengedit konten ini. Admin dapat mengaktifkan/menonaktifkan tautan.');
             return redirect()->route('kelola-tautan');
         }
 

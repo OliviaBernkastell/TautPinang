@@ -6,8 +6,13 @@
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
                         <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
-                            Kelola Tautan
+                            {{ $statistics['is_admin'] ? 'Kelola Semua Tautan' : 'Kelola Tautan' }}
                         </h2>
+                        @if ($statistics['is_admin'])
+                            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                                Mengelola semua tautan dari seluruh user
+                            </p>
+                        @endif
                     </div>
                 </div>
 
@@ -263,6 +268,17 @@
                                             <p class="text-sm text-gray-500 dark:text-gray-400 truncate">
                                                 /{{ $tautan->slug }}
                                             </p>
+
+                                            <!-- Pembuat Link (untuk admin) -->
+                                            @if ($statistics['is_admin'] && $tautan->user)
+                                                <div class="flex items-center mt-1 text-xs text-gray-500 dark:text-gray-400">
+                                                    <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                                    </svg>
+                                                    {{ $tautan->user->name }}
+                                                    <span class="ml-2 text-gray-400">({{ $tautan->user->email }})</span>
+                                                </div>
+                                            @endif
                                             @if ($tautan->description)
                                                 <p class="text-sm text-gray-400 dark:text-gray-500 mt-1 line-clamp-2">
                                                     {{ $tautan->description }}

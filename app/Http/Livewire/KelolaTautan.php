@@ -92,29 +92,63 @@ class KelolaTautan extends Component
 
     private function getTautanIds()
     {
-        return Tautan::byUser(Auth::id())
-            ->when($this->search, function ($query) {
-                $query->where(function ($q) {
-                    $q->where('title', 'like', '%' . $this->search . '%')
-                        ->orWhere('description', 'like', '%' . $this->search . '%')
-                        ->orWhere('slug', 'like', '%' . $this->search . '%');
-                });
-            })
-            ->when($this->filterStatus !== 'all', function ($query) {
-                if ($this->filterStatus === 'active') {
-                    $query->where('is_active', true);
-                } elseif ($this->filterStatus === 'inactive') {
-                    $query->where('is_active', false);
-                }
-            })
-            ->when($this->filterImageType !== 'all', function ($query) {
-                if ($this->filterImageType === 'uploaded') {
-                    $query->where('use_uploaded_logo', true);
-                } elseif ($this->filterImageType === 'url') {
-                    $query->where('use_uploaded_logo', false);
-                }
-            })
-            ->pluck('id');
+        $currentUser = Auth::user();
+        $isAdmin = $currentUser->role === 'admin';
+
+        if ($isAdmin) {
+            // Admin: Bisa manage semua tautan
+            return Tautan::when($this->search, function ($query) {
+                    $query->where(function ($q) {
+                        $q->where('title', 'like', '%' . $this->search . '%')
+                          ->orWhere('description', 'like', '%' . $this->search . '%')
+                          ->orWhere('slug', 'like', '%' . $this->search . '%')
+                          ->orWhereHas('user', function ($userQuery) {
+                              $userQuery->where('name', 'like', '%' . $this->search . '%')
+                                       ->orWhere('email', 'like', '%' . $this->search . '%');
+                          });
+                    });
+                })
+                ->when($this->filterStatus !== 'all', function ($query) {
+                    if ($this->filterStatus === 'active') {
+                        $query->where('is_active', true);
+                    } elseif ($this->filterStatus === 'inactive') {
+                        $query->where('is_active', false);
+                    }
+                })
+                ->when($this->filterImageType !== 'all', function ($query) {
+                    if ($this->filterImageType === 'uploaded') {
+                        $query->where('use_uploaded_logo', true);
+                    } elseif ($this->filterImageType === 'url') {
+                        $query->where('use_uploaded_logo', false);
+                    }
+                })
+                ->pluck('id');
+        } else {
+            // User biasa: Hanya tautan sendiri
+            return Tautan::byUser(Auth::id())
+                ->when($this->search, function ($query) {
+                    $query->where(function ($q) {
+                        $q->where('title', 'like', '%' . $this->search . '%')
+                          ->orWhere('description', 'like', '%' . $this->search . '%')
+                          ->orWhere('slug', 'like', '%' . $this->search . '%');
+                    });
+                })
+                ->when($this->filterStatus !== 'all', function ($query) {
+                    if ($this->filterStatus === 'active') {
+                        $query->where('is_active', true);
+                    } elseif ($this->filterStatus === 'inactive') {
+                        $query->where('is_active', false);
+                    }
+                })
+                ->when($this->filterImageType !== 'all', function ($query) {
+                    if ($this->filterImageType === 'uploaded') {
+                        $query->where('use_uploaded_logo', true);
+                    } elseif ($this->filterImageType === 'url') {
+                        $query->where('use_uploaded_logo', false);
+                    }
+                })
+                ->pluck('id');
+        }
     }
 
     public function resetFilters()
@@ -139,8 +173,11 @@ class KelolaTautan extends Component
 
     public function showDeleteConfirm($tautanId)
     {
+        $currentUser = Auth::user();
+        $isAdmin = $currentUser->role === 'admin';
+
         $this->selectedTautan = Tautan::find($tautanId);
-        if ($this->selectedTautan && $this->selectedTautan->user_id === Auth::id()) {
+        if ($this->selectedTautan && ($isAdmin || $this->selectedTautan->user_id === Auth::id())) {
             $this->showDeleteModal = true;
         }
     }
@@ -150,7 +187,10 @@ class KelolaTautan extends Component
         try {
             $this->isLoading = true;
 
-            if ($this->selectedTautan && $this->selectedTautan->user_id === Auth::id()) {
+            $currentUser = Auth::user();
+            $isAdmin = $currentUser->role === 'admin';
+
+            if ($this->selectedTautan && ($isAdmin || $this->selectedTautan->user_id === Auth::id())) {
                 $this->selectedTautan->delete();
 
                 $this->showDeleteModal = false;
@@ -176,6 +216,8 @@ class KelolaTautan extends Component
             $this->editDescription = $this->selectedTautan->description;
             $this->editIsActive = $this->selectedTautan->is_active;
             $this->showEditModal = true;
+        } elseif ($this->selectedTautan) {
+            session()->flash('error', 'Hanya pembuat tautan yang dapat mengedit konten ini. Admin dapat mengaktifkan/menonaktifkan tautan.');
         }
     }
 
@@ -203,7 +245,7 @@ class KelolaTautan extends Component
                 $this->emit('tautanUpdated');
                 session()->flash('success', 'Tautan berhasil diperbarui!');
             } else {
-                session()->flash('error', 'Tautan tidak ditemukan atau Anda tidak memiliki izin untuk mengeditnya.');
+                session()->flash('error', 'Hanya pembuat tautan yang dapat mengedit konten ini. Admin dapat mengaktifkan/menonaktifkan tautan.');
             }
         } catch (\Exception $e) {
             session()->flash('error', 'Terjadi kesalahan saat memperbarui tautan: ' . $e->getMessage());
@@ -214,8 +256,11 @@ class KelolaTautan extends Component
 
     public function showView($tautanId)
     {
+        $currentUser = Auth::user();
+        $isAdmin = $currentUser->role === 'admin';
+
         $this->selectedTautan = Tautan::with('user')->find($tautanId);
-        if ($this->selectedTautan && $this->selectedTautan->user_id === Auth::id()) {
+        if ($this->selectedTautan && ($isAdmin || $this->selectedTautan->user_id === Auth::id())) {
             $this->showViewModal = true;
         }
     }
@@ -223,14 +268,33 @@ class KelolaTautan extends Component
     public function toggleActive($tautanId)
     {
         try {
-            $tautan = Tautan::find($tautanId);
-            if ($tautan && $tautan->user_id === Auth::id()) {
-                $tautan->update(['is_active' => !$tautan->is_active]);
+            $currentUser = Auth::user();
+            $isAdmin = $currentUser->role === 'admin';
 
-                $status = $tautan->is_active ? 'diaktifkan' : 'dinonaktifkan';
-                session()->flash('success', "Tautan berhasil {$status}!");
+            $tautan = Tautan::find($tautanId);
+            if ($tautan) {
+                // Check if user has permission to toggle this tautan
+                if ($isAdmin || $tautan->user_id === Auth::id()) {
+                    $tautan->is_active = !$tautan->is_active;
+                    $tautan->save();
+
+                    // Debug: Log the update
+                    \Log::info('Tautan toggled', [
+                        'id' => $tautan->id,
+                        'title' => $tautan->title,
+                        'new_is_active' => $tautan->is_active,
+                        'user_id' => $tautan->user_id,
+                        'current_user_id' => Auth::id(),
+                        'is_admin' => $isAdmin
+                    ]);
+
+                    $status = $tautan->is_active ? 'diaktifkan' : 'dinonaktifkan';
+                    session()->flash('success', "Tautan berhasil {$status}!");
+                } else {
+                    session()->flash('error', 'Anda tidak memiliki izin untuk mengubah tautan ini.');
+                }
             } else {
-                session()->flash('error', 'Tautan tidak ditemukan atau Anda tidak memiliki izin untuk mengubah statusnya.');
+                session()->flash('error', 'Tautan tidak ditemukan.');
             }
         } catch (\Exception $e) {
             session()->flash('error', 'Terjadi kesalahan saat mengubah status tautan: ' . $e->getMessage());
@@ -289,22 +353,73 @@ class KelolaTautan extends Component
 
         $count = 0;
         $action = $this->bulkAction;
-        $tautans = Tautan::byUser(Auth::id())->whereIn('id', $this->selectedItems)->get();
+        $currentUser = Auth::user();
+        $isAdmin = $currentUser->role === 'admin';
+
+        // Debug: Log the operation
+        \Log::info('Bulk action started', [
+            'action' => $action,
+            'selected_items' => $this->selectedItems,
+            'is_admin' => $isAdmin,
+            'user_id' => Auth::id()
+        ]);
+
+        if ($isAdmin) {
+            // Admin: Bisa manage semua tautan
+            $tautans = Tautan::whereIn('id', $this->selectedItems)->get();
+        } else {
+            // User biasa: Hanya tautan sendiri
+            $tautans = Tautan::byUser(Auth::id())->whereIn('id', $this->selectedItems)->get();
+        }
+
+        // Debug: Log what we found
+        \Log::info('Tautan found for bulk action', [
+            'count' => $tautans->count(),
+            'tautan_ids' => $tautans->pluck('id')->toArray(),
+            'tautan_titles' => $tautans->pluck('title')->toArray()
+        ]);
 
         foreach ($tautans as $tautan) {
-            switch ($action) {
-                case 'delete':
-                    $tautan->delete();
-                    $count++;
-                    break;
-                case 'activate':
-                    $tautan->update(['is_active' => true]);
-                    $count++;
-                    break;
-                case 'deactivate':
-                    $tautan->update(['is_active' => false]);
-                    $count++;
-                    break;
+            try {
+                switch ($action) {
+                    case 'delete':
+                        $tautan->delete();
+                        $count++;
+                        break;
+                    case 'activate':
+                        $tautan->is_active = true;
+                        $tautan->save();
+                        $count++;
+
+                        // Debug: Log the update
+                        \Log::info('Tautan activated', [
+                            'id' => $tautan->id,
+                            'title' => $tautan->title,
+                            'is_active' => $tautan->is_active,
+                            'user_id' => $tautan->user_id
+                        ]);
+                        break;
+                    case 'deactivate':
+                        $tautan->is_active = false;
+                        $tautan->save();
+                        $count++;
+
+                        // Debug: Log the update
+                        \Log::info('Tautan deactivated', [
+                            'id' => $tautan->id,
+                            'title' => $tautan->title,
+                            'is_active' => $tautan->is_active,
+                            'user_id' => $tautan->user_id
+                        ]);
+                        break;
+                }
+            } catch (\Exception $e) {
+                \Log::error('Error updating tautan', [
+                    'id' => $tautan->id,
+                    'action' => $action,
+                    'error' => $e->getMessage()
+                ]);
+                session()->flash('error', 'Terjadi kesalahan pada tautan ' . $tautan->title . ': ' . $e->getMessage());
             }
         }
 
@@ -450,9 +565,12 @@ class KelolaTautan extends Component
 
     public function showRecoverConfirm($tautanId)
     {
+        $currentUser = Auth::user();
+        $isAdmin = $currentUser->role === 'admin';
+
         $this->selectedDeletedTautan = Tautan::withTrashed()->find($tautanId);
         if ($this->selectedDeletedTautan &&
-            $this->selectedDeletedTautan->user_id === Auth::id() &&
+            ($isAdmin || $this->selectedDeletedTautan->user_id === Auth::id()) &&
             $this->selectedDeletedTautan->deleted_at) {
             $this->showDeletedModal = true;
         }
@@ -463,8 +581,11 @@ class KelolaTautan extends Component
         try {
             $this->isLoading = true;
 
+            $currentUser = Auth::user();
+            $isAdmin = $currentUser->role === 'admin';
+
             if ($this->selectedDeletedTautan &&
-                $this->selectedDeletedTautan->user_id === Auth::id() &&
+                ($isAdmin || $this->selectedDeletedTautan->user_id === Auth::id()) &&
                 $this->selectedDeletedTautan->deleted_at) {
 
                 $this->selectedDeletedTautan->restore();
@@ -486,9 +607,12 @@ class KelolaTautan extends Component
 
     public function forceDeleteConfirm($tautanId)
     {
+        $currentUser = Auth::user();
+        $isAdmin = $currentUser->role === 'admin';
+
         $this->selectedDeletedTautan = Tautan::withTrashed()->find($tautanId);
         if ($this->selectedDeletedTautan &&
-            $this->selectedDeletedTautan->user_id === Auth::id() &&
+            ($isAdmin || $this->selectedDeletedTautan->user_id === Auth::id()) &&
             $this->selectedDeletedTautan->deleted_at) {
             $this->showForceDeleteModal = true;
         }
@@ -499,8 +623,11 @@ class KelolaTautan extends Component
         try {
             $this->isLoading = true;
 
+            $currentUser = Auth::user();
+            $isAdmin = $currentUser->role === 'admin';
+
             if ($this->selectedDeletedTautan &&
-                $this->selectedDeletedTautan->user_id === Auth::id() &&
+                ($isAdmin || $this->selectedDeletedTautan->user_id === Auth::id()) &&
                 $this->selectedDeletedTautan->deleted_at) {
 
                 // Delete associated uploaded logo if exists
@@ -538,10 +665,21 @@ class KelolaTautan extends Component
 
         try {
             $count = 0;
-            $deletedTautans = Tautan::byUser(Auth::id())
-                ->onlyTrashed()
-                ->whereIn('id', $this->selectedItems)
-                ->get();
+            $currentUser = Auth::user();
+            $isAdmin = $currentUser->role === 'admin';
+
+            if ($isAdmin) {
+                // Admin: Bisa recover semua tautan
+                $deletedTautans = Tautan::onlyTrashed()
+                    ->whereIn('id', $this->selectedItems)
+                    ->get();
+            } else {
+                // User biasa: Hanya tautan sendiri
+                $deletedTautans = Tautan::byUser(Auth::id())
+                    ->onlyTrashed()
+                    ->whereIn('id', $this->selectedItems)
+                    ->get();
+            }
 
             foreach ($deletedTautans as $tautan) {
                 $tautan->restore();
@@ -566,10 +704,21 @@ class KelolaTautan extends Component
 
         try {
             $count = 0;
-            $deletedTautans = Tautan::byUser(Auth::id())
-                ->onlyTrashed()
-                ->whereIn('id', $this->selectedItems)
-                ->get();
+            $currentUser = Auth::user();
+            $isAdmin = $currentUser->role === 'admin';
+
+            if ($isAdmin) {
+                // Admin: Bisa force delete semua tautan
+                $deletedTautans = Tautan::onlyTrashed()
+                    ->whereIn('id', $this->selectedItems)
+                    ->get();
+            } else {
+                // User biasa: Hanya tautan sendiri
+                $deletedTautans = Tautan::byUser(Auth::id())
+                    ->onlyTrashed()
+                    ->whereIn('id', $this->selectedItems)
+                    ->get();
+            }
 
             foreach ($deletedTautans as $tautan) {
                 // Delete associated uploaded logo if exists
@@ -595,55 +744,118 @@ class KelolaTautan extends Component
 
     public function render()
     {
+        $currentUser = Auth::user();
+        $isAdmin = $currentUser->role === 'admin';
+
         // Get active tautans (not deleted)
-        $query = Tautan::byUser(Auth::id())
-            ->when($this->search, function ($query) {
-                $query->where(function ($q) {
-                    $q->where('title', 'like', '%' . $this->search . '%')
-                        ->orWhere('description', 'like', '%' . $this->search . '%')
-                        ->orWhere('slug', 'like', '%' . $this->search . '%');
+        if ($isAdmin) {
+            // Admin: Lihat semua tautan dengan nama pembuat
+            $query = Tautan::with('user')
+                ->when($this->search, function ($query) {
+                    $query->where(function ($q) {
+                        $q->where('title', 'like', '%' . $this->search . '%')
+                          ->orWhere('description', 'like', '%' . $this->search . '%')
+                          ->orWhere('slug', 'like', '%' . $this->search . '%')
+                          ->orWhereHas('user', function ($userQuery) {
+                              $userQuery->where('name', 'like', '%' . $this->search . '%')
+                                       ->orWhere('email', 'like', '%' . $this->search . '%');
+                          });
+                    });
+                })
+                ->when($this->filterStatus !== 'all', function ($query) {
+                    if ($this->filterStatus === 'active') {
+                        $query->where('is_active', true);
+                    } elseif ($this->filterStatus === 'inactive') {
+                        $query->where('is_active', false);
+                    }
+                })
+                ->when($this->filterImageType !== 'all', function ($query) {
+                    if ($this->filterImageType === 'uploaded') {
+                        $query->where('use_uploaded_logo', true);
+                    } elseif ($this->filterImageType === 'url') {
+                        $query->where('use_uploaded_logo', false);
+                    }
                 });
-            })
-            ->when($this->filterStatus !== 'all', function ($query) {
-                if ($this->filterStatus === 'active') {
-                    $query->where('is_active', true);
-                } elseif ($this->filterStatus === 'inactive') {
-                    $query->where('is_active', false);
-                }
-            })
-            ->when($this->filterImageType !== 'all', function ($query) {
-                if ($this->filterImageType === 'uploaded') {
-                    $query->where('use_uploaded_logo', true);
-                } elseif ($this->filterImageType === 'url') {
-                    $query->where('use_uploaded_logo', false);
-                }
-            });
+        } else {
+            // User biasa: Lihat tautan sendiri saja
+            $query = Tautan::byUser(Auth::id())
+                ->when($this->search, function ($query) {
+                    $query->where(function ($q) {
+                        $q->where('title', 'like', '%' . $this->search . '%')
+                          ->orWhere('description', 'like', '%' . $this->search . '%')
+                          ->orWhere('slug', 'like', '%' . $this->search . '%');
+                    });
+                })
+                ->when($this->filterStatus !== 'all', function ($query) {
+                    if ($this->filterStatus === 'active') {
+                        $query->where('is_active', true);
+                    } elseif ($this->filterStatus === 'inactive') {
+                        $query->where('is_active', false);
+                    }
+                })
+                ->when($this->filterImageType !== 'all', function ($query) {
+                    if ($this->filterImageType === 'uploaded') {
+                        $query->where('use_uploaded_logo', true);
+                    } elseif ($this->filterImageType === 'url') {
+                        $query->where('use_uploaded_logo', false);
+                    }
+                });
+        }
 
         $tautans = $query->orderBy($this->sortBy, $this->sortDir)
             ->paginate($this->perPage);
 
         // Get deleted tautans for history
-        $deletedTautans = Tautan::byUser(Auth::id())
-            ->onlyTrashed()
-            ->when($this->search, function ($query) {
-                $query->where(function ($q) {
-                    $q->where('title', 'like', '%' . $this->search . '%')
-                        ->orWhere('description', 'like', '%' . $this->search . '%')
-                        ->orWhere('slug', 'like', '%' . $this->search . '%');
-                });
-            })
-            ->orderBy('deleted_at', 'desc')
-            ->get();
+        if ($isAdmin) {
+            $deletedTautans = Tautan::with('user')
+                ->onlyTrashed()
+                ->when($this->search, function ($query) {
+                    $query->where(function ($q) {
+                        $q->where('title', 'like', '%' . $this->search . '%')
+                          ->orWhere('description', 'like', '%' . $this->search . '%')
+                          ->orWhere('slug', 'like', '%' . $this->search . '%')
+                          ->orWhereHas('user', function ($userQuery) {
+                              $userQuery->where('name', 'like', '%' . $this->search . '%')
+                                       ->orWhere('email', 'like', '%' . $this->search . '%');
+                          });
+                    });
+                })
+                ->orderBy('deleted_at', 'desc')
+                ->get();
+        } else {
+            $deletedTautans = Tautan::byUser(Auth::id())
+                ->onlyTrashed()
+                ->when($this->search, function ($query) {
+                    $query->where(function ($q) {
+                        $q->where('title', 'like', '%' . $this->search . '%')
+                          ->orWhere('description', 'like', '%' . $this->search . '%')
+                          ->orWhere('slug', 'like', '%' . $this->search . '%');
+                    });
+                })
+                ->orderBy('deleted_at', 'desc')
+                ->get();
+        }
 
         // Statistics
-        $totalTautans = Tautan::byUser(Auth::id())->count();
-        $activeTautans = Tautan::byUser(Auth::id())->where('is_active', true)->count();
-        $inactiveTautans = Tautan::byUser(Auth::id())->where('is_active', false)->count();
-        $deletedTautansCount = Tautan::byUser(Auth::id())->onlyTrashed()->count();
-        $uploadedImageTautans = Tautan::byUser(Auth::id())->where('use_uploaded_logo', true)->count();
-        $totalLinks = Tautan::byUser(Auth::id())->get()->sum(function ($tautan) {
-            return is_array($tautan->links) ? count($tautan->links) : 0;
-        });
+        if ($isAdmin) {
+            $totalTautans = Tautan::count();
+            $activeTautans = Tautan::where('is_active', true)->count();
+            $inactiveTautans = Tautan::where('is_active', false)->count();
+            $deletedTautansCount = Tautan::onlyTrashed()->count();
+            $uploadedImageTautans = Tautan::where('use_uploaded_logo', true)->count();
+            $totalLinks = Tautan::get()->sum(function ($tautan) {
+                return is_array($tautan->links) ? count($tautan->links) : 0;
+            });
+        } else {
+            $totalTautans = Tautan::byUser(Auth::id())->count();
+            $activeTautans = Tautan::byUser(Auth::id())->where('is_active', true)->count();
+            $inactiveTautans = Tautan::byUser(Auth::id())->where('is_active', false)->count();
+            $deletedTautansCount = Tautan::byUser(Auth::id())->onlyTrashed()->count();
+            $uploadedImageTautans = Tautan::byUser(Auth::id())->where('use_uploaded_logo', true)->count();
+            $totalLinks = Tautan::byUser(Auth::id())->get()->sum(function ($tautan) {
+                return is_array($tautan->links) ? count($tautan->links) : 0;
+            });
+        }
 
         $statistics = [
             'total' => $totalTautans,
@@ -653,6 +865,7 @@ class KelolaTautan extends Component
             'uploaded_images' => $uploadedImageTautans,
             'total_links' => $totalLinks,
             'filtered_count' => $tautans->total(),
+            'is_admin' => $isAdmin,
         ];
 
         return view('livewire.kelola-tautan', compact('tautans', 'deletedTautans', 'statistics'));
