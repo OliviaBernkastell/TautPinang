@@ -1,16 +1,28 @@
 <x-guest-layout>
-    <!-- Light Theme Background -->
-    <div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-emerald-50">
-        <!-- Simple Subtle Background Elements -->
+    <!-- Theme-aware Background -->
+    <div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-emerald-50"
+         style="transition: background 0.3s ease;">
+        <div class="min-h-screen" data-theme-bg="true">
+        <!-- Theme-aware Background Elements -->
         <div class="absolute inset-0 overflow-hidden pointer-events-none">
-            <!-- Simple floating shapes -->
-            <div class="absolute w-32 h-32 rounded-full top-20 left-10 bg-blue-200/20 blur-2xl"></div>
-            <div class="absolute w-40 h-40 rounded-full top-40 right-20 bg-emerald-200/20 blur-2xl"></div>
-            <div class="absolute rounded-full bottom-20 left-1/4 w-36 h-36 bg-orange-200/20 blur-2xl"></div>
+            <!-- Floating shapes dengan data-theme control -->
+            <div class="light-shape absolute w-32 h-32 rounded-full top-20 left-10 bg-blue-200/20 blur-2xl"></div>
+            <div class="light-shape absolute w-40 h-40 rounded-full top-40 right-20 bg-emerald-200/20 blur-2xl"></div>
+            <div class="light-shape absolute rounded-full bottom-20 left-1/4 w-36 h-36 bg-orange-200/20 blur-2xl"></div>
+
+            <div class="dark-shape absolute w-32 h-32 rounded-full top-20 left-10 bg-blue-600/10 blur-2xl"></div>
+            <div class="dark-shape absolute w-40 h-40 rounded-full top-40 right-20 bg-emerald-600/10 blur-2xl"></div>
+            <div class="dark-shape absolute rounded-full bottom-20 left-1/4 w-36 h-36 bg-orange-600/10 blur-2xl"></div>
         </div>
 
         <!-- Main Content -->
         <div class="relative flex items-center justify-center min-h-screen px-4 py-12">
+            <!-- Dark Mode Toggle Button -->
+            <button id="darkModeToggle" class="absolute top-4 right-4 p-3 rounded-lg bg-white/80 backdrop-blur-sm border border-gray-200 hover:bg-white transition-all duration-300 shadow-md toggle-button">
+                <i id="sunIcon" class="w-5 h-5 text-yellow-500 hidden fas fa-sun"></i>
+                <i id="moonIcon" class="w-5 h-5 text-gray-700 fas fa-moon"></i>
+            </button>
+
             <div class="w-full max-w-5xl mx-auto">
                 <div class="grid items-center grid-cols-1 gap-12 lg:grid-cols-2">
 
@@ -19,10 +31,9 @@
                         <!-- Logo -->
                         <div class="flex justify-center lg:justify-start">
                             <div class="relative">
-                                <div
-                                    class="absolute inset-0 bg-gradient-to-r from-blue-400 to-emerald-400 rounded-2xl blur-xl opacity-30">
+                                <div class="logo-glow absolute inset-0 bg-gradient-to-r from-blue-400 to-emerald-400 rounded-2xl blur-xl opacity-30">
                                 </div>
-                                <div class="relative p-6 bg-white border border-blue-100 shadow-xl rounded-2xl">
+                                <div class="relative p-6 bg-white border border-blue-100 shadow-xl rounded-2xl logo-container">
                                     <img src="{{ asset('img/favicon.png') }}" alt="Taut Pinang"
                                         class="object-contain w-24 h-24">
                                 </div>
@@ -32,49 +43,42 @@
                         <!-- Title and Description -->
                         <div class="space-y-4">
                             <h1 class="text-4xl font-bold lg:text-5xl">
-                                <span
-                                    class="text-transparent bg-gradient-to-r from-blue-600 via-cyan-600 to-emerald-600 bg-clip-text">
+                                <span class="brand-title text-transparent bg-gradient-to-r from-blue-600 via-cyan-600 to-emerald-600 bg-clip-text">
                                     Taut Pinang
                                 </span>
                             </h1>
-                            <p class="text-xl font-light text-gray-600">Website Pembuat Tautan</p>
+                            <p class="brand-desc text-xl font-light text-gray-600">Website Pembuat Tautan</p>
                         </div>
 
                         <!-- Features -->
                         <div class="space-y-4">
-                            <div
-                                class="flex items-start p-4 space-x-4 border border-blue-100 rounded-xl bg-white/50 backdrop-blur-sm">
-                                <div
-                                    class="flex items-center justify-center flex-shrink-0 w-12 h-12 bg-blue-100 rounded-lg">
+                            <div class="feature-card feature-card-blue flex items-start p-4 space-x-4 border border-blue-100 rounded-xl bg-white/50 backdrop-blur-sm">
+                                <div class="icon-container-blue flex items-center justify-center flex-shrink-0 w-12 h-12 bg-blue-100 rounded-lg">
                                     <i class="text-lg text-blue-600 fas fa-link"></i>
                                 </div>
                                 <div>
-                                    <h3 class="text-lg font-semibold text-gray-800">Pembuat Tautan Cerdas</h3>
-                                    <p class="text-gray-600">Buat tautan pendek yang efisien dan profesional</p>
+                                    <h3 class="feature-title text-lg font-semibold text-gray-800">Pembuat Tautan Cerdas</h3>
+                                    <p class="feature-desc text-gray-600">Buat tautan pendek yang efisien dan profesional</p>
                                 </div>
                             </div>
 
-                            <div
-                                class="flex items-start p-4 space-x-4 border rounded-xl bg-white/50 backdrop-blur-sm border-emerald-100">
-                                <div
-                                    class="flex items-center justify-center flex-shrink-0 w-12 h-12 rounded-lg bg-emerald-100">
+                            <div class="feature-card feature-card-emerald flex items-start p-4 space-x-4 border rounded-xl bg-white/50 backdrop-blur-sm border-emerald-100">
+                                <div class="icon-container-emerald flex items-center justify-center flex-shrink-0 w-12 h-12 rounded-lg bg-emerald-100">
                                     <i class="text-lg fas fa-bolt text-emerald-600"></i>
                                 </div>
                                 <div>
-                                    <h3 class="text-lg font-semibold text-gray-800">Super Cepat</h3>
-                                    <p class="text-gray-600">Akses instan tanpa hambatan</p>
+                                    <h3 class="feature-title text-lg font-semibold text-gray-800">Super Cepat</h3>
+                                    <p class="feature-desc text-gray-600">Akses instan tanpa hambatan</p>
                                 </div>
                             </div>
 
-                            <div
-                                class="flex items-start p-4 space-x-4 border border-orange-100 rounded-xl bg-white/50 backdrop-blur-sm">
-                                <div
-                                    class="flex items-center justify-center flex-shrink-0 w-12 h-12 bg-orange-100 rounded-lg">
+                            <div class="feature-card feature-card-orange flex items-start p-4 space-x-4 border border-orange-100 rounded-xl bg-white/50 backdrop-blur-sm">
+                                <div class="icon-container-orange flex items-center justify-center flex-shrink-0 w-12 h-12 bg-orange-100 rounded-lg">
                                     <i class="text-lg text-orange-600 fas fa-users"></i>
                                 </div>
                                 <div>
-                                    <h3 class="text-lg font-semibold text-gray-800">User Friendly</h3>
-                                    <p class="text-gray-600">Mudah digunakan untuk semua kalangan</p>
+                                    <h3 class="feature-title text-lg font-semibold text-gray-800">User Friendly</h3>
+                                    <p class="feature-desc text-gray-600">Mudah digunakan untuk semua kalangan</p>
                                 </div>
                             </div>
                         </div>
@@ -85,14 +89,13 @@
                         <div class="login-card">
                             <!-- Form Header -->
                             <div class="mb-8 text-center">
-                                <div
-                                    class="inline-flex items-center justify-center w-16 h-16 mb-4 bg-gradient-to-br from-blue-500 to-emerald-500 rounded-2xl">
+                                <div class="form-icon-gradient inline-flex items-center justify-center w-16 h-16 mb-4 bg-gradient-to-br from-blue-500 to-emerald-500 rounded-2xl">
                                     <i class="text-2xl text-white fas fa-user"></i>
                                 </div>
-                                <h2 class="mb-2 text-3xl font-bold text-gray-800">
+                                <h2 class="form-title mb-2 text-3xl font-bold text-gray-800">
                                     Selamat Datang
                                 </h2>
-                                <p class="text-gray-600">Masuk ke akun Taut Pinang Anda</p>
+                                <p class="form-subtitle text-gray-600">Masuk ke akun Taut Pinang Anda</p>
                             </div>
 
                             <!-- Login Form -->
@@ -150,7 +153,7 @@
                                 <div class="flex items-center justify-between">
                                     <label class="flex items-center space-x-3 cursor-pointer">
                                         <input type="checkbox" name="remember" class="checkbox-input">
-                                        <span class="text-gray-700">
+                                        <span class="remember-text text-gray-700">
                                             Ingat saya
                                         </span>
                                     </label>
@@ -172,7 +175,7 @@
                                 </button>
 
                                 <!-- Login Options -->
-                                <p class="mb-4 text-sm font-medium text-center text-gray-500">atau masuk dengan</p>
+                                <p class="divider-text mb-4 text-sm font-medium text-center text-gray-500">atau masuk dengan</p>
 
                                 <!-- Google Login -->
                                 <a href="{{ route('auth.google') }}" class="google-btn" id="googleBtn">
@@ -200,10 +203,9 @@
 
                                 <!-- Register Link -->
                                 <div class="mt-6 text-center">
-                                    <p class="text-gray-600">
+                                    <p class="register-text text-gray-600">
                                         Belum punya akun?
-                                        <a href="{{ route('register') }}"
-                                            class="text-transparent transition-all hover:underline bg-gradient-to-r from-blue-600 to-emerald-600 bg-clip-text">
+                                        <a href="{{ route('register') }}" class="register-link text-transparent transition-all hover:underline bg-gradient-to-r from-blue-600 to-emerald-600 bg-clip-text">
                                             Daftar sekarang
                                         </a>
                                     </p>
@@ -214,11 +216,91 @@
                 </div>
             </div>
         </div>
+        </div>
     </div>
 
-    <!-- JavaScript untuk Spinner -->
+    <!-- JavaScript untuk Spinner dan Dark Mode Toggle -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Dark Mode Toggle Handler - Integrated with Guest Layout System
+            const darkModeToggle = document.getElementById('darkModeToggle');
+
+            // Function to set theme (matches guest layout)
+            function setTheme(theme) {
+                const htmlElement = document.documentElement;
+                if (theme === 'dark') {
+                    htmlElement.setAttribute('data-theme', 'dark');
+                    localStorage.setItem('theme', 'dark');
+                } else {
+                    htmlElement.setAttribute('data-theme', 'light');
+                    localStorage.setItem('theme', 'light');
+                }
+
+                // Update icons visibility
+                const sunIcon = document.getElementById('sunIcon');
+                const moonIcon = document.getElementById('moonIcon');
+
+                if (theme === 'dark') {
+                    if (sunIcon) sunIcon.classList.remove('hidden');
+                    if (moonIcon) moonIcon.classList.add('hidden');
+                } else {
+                    if (sunIcon) sunIcon.classList.add('hidden');
+                    if (moonIcon) moonIcon.classList.remove('hidden');
+                }
+            }
+
+            // Function to toggle theme
+            function toggleTheme() {
+                const currentTheme = document.documentElement.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                setTheme(newTheme);
+            }
+
+            // Initialize theme on load
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+            // Set initial theme based on current state or preference
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+
+            // Update icons immediately based on current theme
+            function updateIcons() {
+                const theme = document.documentElement.getAttribute('data-theme') || (prefersDark ? 'dark' : 'light');
+                const sunIcon = document.getElementById('sunIcon');
+                const moonIcon = document.getElementById('moonIcon');
+
+                if (theme === 'dark') {
+                    if (sunIcon) sunIcon.classList.remove('hidden');
+                    if (moonIcon) moonIcon.classList.add('hidden');
+                } else {
+                    if (sunIcon) sunIcon.classList.add('hidden');
+                    if (moonIcon) moonIcon.classList.remove('hidden');
+                }
+            }
+
+            if (savedTheme) {
+                setTheme(savedTheme);
+            } else if (currentTheme) {
+                // Use theme already set by guest layout
+                updateIcons();
+            } else if (prefersDark) {
+                setTheme('dark');
+            } else {
+                setTheme('light');
+            }
+
+            // Add click handler to toggle button
+            if (darkModeToggle) {
+                darkModeToggle.addEventListener('click', toggleTheme);
+            }
+
+            // Listen for system theme changes
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+                if (!localStorage.getItem('theme')) {
+                    setTheme(e.matches ? 'dark' : 'light');
+                }
+            });
+
             // Login Form Submit Handler
             const loginForm = document.getElementById('loginForm');
             const loginBtn = document.getElementById('loginBtn');
@@ -294,7 +376,179 @@
     </script>
 
     <style>
-        /* Light Theme Styles */
+        /* Background Theme Override */
+        [data-theme="light"] div[data-theme-bg="true"] {
+            background: linear-gradient(to bottom right, #eff6ff, #ffffff, #ecfdf5) !important;
+        }
+
+        [data-theme="dark"] div[data-theme-bg="true"] {
+            background: linear-gradient(to bottom right, #111827, #1e3a8a, #064e3b) !important;
+        }
+
+        /* Floating Shapes Theme Control */
+        [data-theme="light"] .light-shape {
+            display: block;
+        }
+
+        [data-theme="dark"] .light-shape {
+            display: none;
+        }
+
+        [data-theme="light"] .dark-shape {
+            display: none;
+        }
+
+        [data-theme="dark"] .dark-shape {
+            display: block;
+        }
+
+        /* Toggle Button Theme Control */
+        .toggle-button {
+            background: rgba(255, 255, 255, 0.8);
+            border-color: #e5e7eb;
+        }
+
+        [data-theme="dark"] .toggle-button {
+            background: rgba(31, 41, 55, 0.8);
+            border-color: #374151;
+        }
+
+        .toggle-button:hover {
+            background: rgba(255, 255, 255, 1);
+        }
+
+        [data-theme="dark"] .toggle-button:hover {
+            background: rgba(31, 41, 55, 1);
+        }
+
+        /* Logo Theme Control */
+        [data-theme="dark"] .logo-glow {
+            background: linear-gradient(to right, #2563eb, #059669);
+            opacity: 0.4;
+        }
+
+        [data-theme="dark"] .logo-container {
+            background: #1f2937;
+            border-color: #1e3a8a;
+        }
+
+        /* Brand Title & Description */
+        [data-theme="dark"] .brand-title {
+            background: linear-gradient(to right, #60a5fa, #34d399, #10b981);
+            -webkit-background-clip: text;
+            background-clip: text;
+        }
+
+        [data-theme="dark"] .brand-desc {
+            color: #d1d5db;
+        }
+
+        /* Feature Cards */
+        .feature-card {
+            transition: all 0.3s ease;
+        }
+
+        [data-theme="dark"] .feature-card-blue {
+            background: rgba(31, 41, 55, 0.5);
+            border-color: #1e3a8a;
+        }
+
+        [data-theme="dark"] .feature-card-emerald {
+            background: rgba(31, 41, 55, 0.5);
+            border-color: #064e3b;
+        }
+
+        [data-theme="dark"] .feature-card-orange {
+            background: rgba(31, 41, 55, 0.5);
+            border-color: #92400e;
+        }
+
+        /* Icon Containers */
+        [data-theme="dark"] .icon-container-blue {
+            background: #1e3a8a;
+        }
+
+        [data-theme="dark"] .icon-container-emerald {
+            background: #064e3b;
+        }
+
+        [data-theme="dark"] .icon-container-orange {
+            background: #92400e;
+        }
+
+        .icon-container-blue i {
+            transition: color 0.3s ease;
+        }
+
+        .icon-container-emerald i {
+            transition: color 0.3s ease;
+        }
+
+        .icon-container-orange i {
+            transition: color 0.3s ease;
+        }
+
+        [data-theme="dark"] .icon-container-blue i {
+            color: #60a5fa !important;
+        }
+
+        [data-theme="dark"] .icon-container-emerald i {
+            color: #34d399 !important;
+        }
+
+        [data-theme="dark"] .icon-container-orange i {
+            color: #fbbf24 !important;
+        }
+
+        /* Feature Text */
+        .feature-title {
+            transition: color 0.3s ease;
+        }
+
+        .feature-desc {
+            transition: color 0.3s ease;
+        }
+
+        [data-theme="dark"] .feature-title {
+            color: #f3f4f6 !important;
+        }
+
+        [data-theme="dark"] .feature-desc {
+            color: #d1d5db !important;
+        }
+
+        /* Form Elements */
+        [data-theme="dark"] .form-icon-gradient {
+            background: linear-gradient(to bottom right, #2563eb, #059669);
+        }
+
+        [data-theme="dark"] .form-title {
+            color: #f3f4f6 !important;
+        }
+
+        [data-theme="dark"] .form-subtitle {
+            color: #d1d5db !important;
+        }
+
+        [data-theme="dark"] .remember-text {
+            color: #d1d5db !important;
+        }
+
+        [data-theme="dark"] .divider-text {
+            color: #9ca3af !important;
+        }
+
+        [data-theme="dark"] .register-text {
+            color: #d1d5db !important;
+        }
+
+        [data-theme="dark"] .register-link {
+            background: linear-gradient(to right, #60a5fa, #34d399);
+            -webkit-background-clip: text;
+            background-clip: text;
+        }
+
+        /* Theme-aware Login Card */
         .login-card {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
@@ -302,16 +556,30 @@
             border-radius: 20px;
             padding: 2.5rem;
             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            transition: all 0.3s ease;
         }
 
+        [data-theme="dark"] .login-card {
+            background: rgba(17, 24, 39, 0.95);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Form Labels */
         .form-label {
             display: block;
             font-size: 0.875rem;
             font-weight: 600;
             color: #374151;
             margin-bottom: 0.5rem;
+            transition: color 0.3s ease;
         }
 
+        [data-theme="dark"] .form-label {
+            color: #d1d5db;
+        }
+
+        /* Form Inputs */
         .form-input {
             width: 100%;
             padding: 0.875rem 1rem;
@@ -323,16 +591,31 @@
             transition: all 0.3s ease;
         }
 
+        [data-theme="dark"] .form-input {
+            background: #1f2937;
+            border-color: #374151;
+            color: #f9fafb;
+        }
+
         .form-input:focus {
             outline: none;
             border-color: #3b82f6;
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
         }
 
+        [data-theme="dark"] .form-input:focus {
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+
         .form-input::placeholder {
             color: #9ca3af;
         }
 
+        [data-theme="dark"] .form-input::placeholder {
+            color: #6b7280;
+        }
+
+        /* Checkbox Input */
         .checkbox-input {
             width: 1.25rem;
             height: 1.25rem;
@@ -343,11 +626,17 @@
             transition: all 0.3s ease;
         }
 
+        [data-theme="dark"] .checkbox-input {
+            background: #1f2937;
+            border-color: #4b5563;
+        }
+
         .checkbox-input:checked {
             background: #3b82f6;
             border-color: #3b82f6;
         }
 
+        /* Submit Button */
         .submit-btn {
             width: 100%;
             padding: 1rem;
@@ -369,11 +658,16 @@
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
         }
 
+        [data-theme="dark"] .submit-btn:hover:not(.loading) {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+        }
+
         .submit-btn.loading {
             cursor: not-allowed;
             opacity: 0.9;
         }
 
+        /* Google Button */
         .google-btn {
             display: flex;
             align-items: center;
@@ -393,15 +687,52 @@
             overflow: hidden;
         }
 
+        [data-theme="dark"] .google-btn {
+            background: #1f2937;
+            border-color: #374151;
+            color: #d1d5db;
+        }
+
         .google-btn:hover:not(.loading) {
             background: #f9fafb;
             border-color: #d1d5db;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
 
+        [data-theme="dark"] .google-btn:hover:not(.loading) {
+            background: #374151;
+            border-color: #4b5563;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+        }
+
         .google-btn.loading {
             cursor: not-allowed;
             opacity: 0.9;
+        }
+
+        /* Error Message */
+        .error-message {
+            background: #fef3c7;
+            border: 1px solid #f59e0b;
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        [data-theme="dark"] .error-message {
+            background: rgba(245, 158, 11, 0.1);
+            border-color: rgba(245, 158, 11, 0.3);
+        }
+
+        .error-text {
+            color: #d97706;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+
+        [data-theme="dark"] .error-text {
+            color: #fbbf24;
         }
 
         /* Spinner Styles */
@@ -453,21 +784,7 @@
             justify-content: center;
         }
 
-        .error-message {
-            background: #fef3c7;
-            border: 1px solid #f59e0b;
-            border-radius: 12px;
-            padding: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .error-text {
-            color: #d97706;
-            font-size: 0.875rem;
-            margin-top: 0.25rem;
-        }
-
-        /* Responsive */
+        /* Responsive Design */
         @media (max-width: 1024px) {
             .login-card {
                 padding: 2rem;
@@ -478,6 +795,30 @@
             .login-card {
                 padding: 1.5rem;
             }
+        }
+
+        /* Dark Mode Toggle Button Animation */
+        #darkModeToggle {
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        #darkModeToggle:hover {
+            transform: scale(1.05);
+        }
+
+        #darkModeToggle:active {
+            transform: scale(0.95);
         }
     </style>
 </x-guest-layout>
