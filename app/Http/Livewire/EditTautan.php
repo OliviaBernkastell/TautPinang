@@ -134,7 +134,7 @@ class EditTautan extends Component
         'judul' => 'required|min:3|max:100',
         'slug' => 'required|min:3|max:50|regex:/^[a-zA-Z0-9\-_]+$/',
         'deskripsi' => 'nullable|max:500',
-        'logoUrl' => 'nullable|url',
+        'logoUrl' => 'nullable|url', // Only validated when useUploadedLogo = false
         'logoUpload' => 'nullable|image|max:2048', // max 2MB
         'footerText1' => 'nullable|max:100',
         'footerText2' => 'nullable|max:100',
@@ -1130,20 +1130,52 @@ class EditTautan extends Component
     // UPDATE: Method saveToDatabase() untuk menggunakan final slug
     public function updateToDatabase()
     {
+        logger('🚀 updateToDatabase() STARTED');
+        logger('📝 Current data:', [
+            'judul' => $this->judul,
+            'slug' => $this->slug,
+            'links_count' => count($this->links),
+            'use_uploaded_logo' => $this->useUploadedLogo
+        ]);
+
         $originalSlug = $this->slug;
         $this->slug = $this->getFinalSlug();
 
-        $this->validate();
+        logger('🔧 Final slug: ' . $this->slug);
+
+        try {
+            // Conditional validation based on logo mode
+            $rules = $this->rules;
+
+            // Skip logoUrl validation when using uploaded logo
+            if ($this->useUploadedLogo) {
+                unset($rules['logoUrl']);
+                logger('📷 Upload mode detected - skipping logoUrl validation');
+            }
+
+            $this->validate($rules);
+            logger('✅ Validation passed');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            logger('❌ Validation failed: ' . json_encode($e->errors()));
+            session()->flash('error', 'Validasi gagal: ' . implode(', ', $e->validator->errors()->all()));
+            $this->slug = $originalSlug;
+            return;
+        }
 
         if (!$this->validateSlug()) {
+            logger('❌ Invalid slug: ' . $this->slug);
             $this->slug = $originalSlug;
             session()->flash('error', 'Slug tidak valid atau sudah di-reserve sistem.');
             return;
         }
 
+        logger('✅ Slug validation passed');
+
         $validLinks = $this->getValidLinks();
+        logger('🔗 Valid links count: ' . count($validLinks));
 
         if (empty($validLinks)) {
+            logger('❌ No valid links found');
             $this->emit('databaseError', 'Minimal harus ada satu link yang valid.');
             session()->flash('error', 'Minimal harus ada satu link yang valid.');
             $this->slug = $originalSlug;

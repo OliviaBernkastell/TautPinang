@@ -2364,19 +2364,13 @@
                 // CSS sudah mencakup semua hover effects (background gradient, color, border, glow)
                 // Jangan tambah JavaScript event listeners karena akan override CSS hover
 
-                // Get current hover settings from Livewire component (untuk debug saja)
-                let component = Livewire.find('buat-tautan');
-                if (!component) {
-                    // Try alternative method to find component
-                    const components = Livewire.all();
-                    component = components.find(comp => comp.name === 'buat-tautan');
-                }
-                if (!component) {
-                    console.warn('⚠️ Cannot find Livewire component');
+                // Get current hover settings from Livewire component (untuk debug saja) - FIXED
+                if (typeof @this === 'undefined') {
+                    console.warn('Livewire component not available for hover effects debug');
                     return;
                 }
 
-                const styles = component.get('styles') || {};
+                const styles = @this.get('styles') || {};
                 const buttonHover = styles.buttonHover || {};
 
                 console.log('✅ CSS Hover is active with settings:', {
@@ -2852,6 +2846,87 @@
 
             if (syncedCount > 0) {
                 console.log('✅ Synced', syncedCount, 'color pickers from JSON');
+            }
+        }
+
+        function refreshQRColorsFromLivewire() {
+            // Function to refresh QR colors from Livewire state and sync with color pickers
+            console.log('🔄 refreshQRColorsFromLivewire() called');
+
+            try {
+                // Get QR color values from Livewire state using @this (Alpine/Livewire method)
+                if (typeof @this === 'undefined') {
+                    console.warn('Livewire component not available for QR color refresh');
+                    return;
+                }
+
+                // Get QR color values from Livewire state
+                const qrBgColor = @this.get('qrBackgroundColorPicker');
+                const qrBorderColor = @this.get('qrBorderColorPicker');
+                const qrDarkColor = @this.get('qrDarkColorPicker');
+                const qrBgOpacity = @this.get('qrBackgroundOpacity');
+                const qrBorderOpacity = @this.get('qrBorderOpacity');
+                const qrDarkOpacity = @this.get('qrDarkOpacity');
+
+                console.log('🎨 Refreshing QR Colors from Livewire:');
+                console.log('   BG Color:', qrBgColor, 'Opacity:', qrBgOpacity + '%');
+                console.log('   Border Color:', qrBorderColor, 'Opacity:', qrBorderOpacity + '%');
+                console.log('   Dark Color:', qrDarkColor, 'Opacity:', qrDarkOpacity + '%');
+
+                // Update QR color picker inputs
+                const bgPicker = document.getElementById('qrBackgroundColorPicker');
+                const borderPicker = document.getElementById('qrBorderColorPicker');
+                const darkPicker = document.getElementById('qrDarkColorPicker');
+
+                if (bgPicker && qrBgColor) {
+                    bgPicker.value = qrBgColor;
+                    console.log('✅ Updated QR Background Color picker');
+                }
+                if (borderPicker && qrBorderColor) {
+                    borderPicker.value = qrBorderColor;
+                    console.log('✅ Updated QR Border Color picker');
+                }
+                if (darkPicker && qrDarkColor) {
+                    darkPicker.value = qrDarkColor;
+                    console.log('✅ Updated QR Dark Color picker');
+                }
+
+                // Update opacity sliders
+                const bgOpacitySlider = document.getElementById('qrBackgroundOpacity');
+                const borderOpacitySlider = document.getElementById('qrBorderOpacity');
+                const darkOpacitySlider = document.getElementById('qrDarkOpacity');
+
+                if (bgOpacitySlider && qrBgOpacity !== undefined) {
+                    bgOpacitySlider.value = qrBgOpacity;
+                    const bgOutput = document.getElementById('qrBackgroundOutput');
+                    if (bgOutput) {
+                        bgOutput.textContent = qrBgOpacity + '%';
+                    }
+                    console.log('✅ Updated QR Background opacity');
+                }
+
+                if (borderOpacitySlider && qrBorderOpacity !== undefined) {
+                    borderOpacitySlider.value = qrBorderOpacity;
+                    const borderOutput = document.getElementById('qrBorderOutput');
+                    if (borderOutput) {
+                        borderOutput.textContent = qrBorderOpacity + '%';
+                    }
+                    console.log('✅ Updated QR Border opacity');
+                }
+
+                if (darkOpacitySlider && qrDarkOpacity !== undefined) {
+                    darkOpacitySlider.value = qrDarkOpacity;
+                    const darkOutput = document.getElementById('qrDarkOutput');
+                    if (darkOutput) {
+                        darkOutput.textContent = qrDarkOpacity + '%';
+                    }
+                    console.log('✅ Updated QR Dark opacity');
+                }
+
+                console.log('✅ QR Colors refreshed successfully from Livewire state');
+
+            } catch (error) {
+                console.warn('Error refreshing QR colors from Livewire:', error);
             }
         }
         // Parse string RGBA ke object

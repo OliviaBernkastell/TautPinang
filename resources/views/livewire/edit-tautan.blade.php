@@ -1589,6 +1589,7 @@
                                                         <div class="p-3 border border-gray-300 rounded-lg bg-gray-50">
                                                             <div class="flex items-center gap-2 mb-2">
                                                                 <input type="color"
+                                                                    id="qrBackgroundColorPicker"
                                                                     wire:model.live="qrBackgroundColorPicker"
                                                                     value="#ffffff"
                                                                     class="w-12 h-12 border-2 border-gray-300 rounded-lg cursor-pointer">
@@ -1599,9 +1600,10 @@
                                                                     </label>
                                                                     <label class="block mb-1 text-xs text-gray-600">
                                                                         Transparansi:
-                                                                        <span>{{ $qrBackgroundOpacity ?? 100 }}%</span>
+                                                                        <span id="qrBackgroundOutput">{{ $qrBackgroundOpacity ?? 100 }}%</span>
                                                                     </label>
                                                                     <input type="range"
+                                                                        id="qrBackgroundOpacity"
                                                                         wire:model.live="qrBackgroundOpacity"
                                                                         min="0" max="100"
                                                                         value="100"
@@ -1623,6 +1625,7 @@
                                                         <div class="p-3 border border-gray-300 rounded-lg bg-gray-50">
                                                             <div class="flex items-center gap-2 mb-2">
                                                                 <input type="color"
+                                                                    id="qrBorderColorPicker"
                                                                     wire:model.live="qrBorderColorPicker"
                                                                     value="#ffffff"
                                                                     class="w-12 h-12 border-2 border-gray-300 rounded-lg cursor-pointer">
@@ -1633,9 +1636,10 @@
                                                                     </label>
                                                                     <label class="block mb-1 text-xs text-gray-600">
                                                                         Transparansi:
-                                                                        <span>{{ $qrBorderOpacity ?? 100 }}%</span>
+                                                                        <span id="qrBorderOutput">{{ $qrBorderOpacity ?? 100 }}%</span>
                                                                     </label>
                                                                     <input type="range"
+                                                                        id="qrBorderOpacity"
                                                                         wire:model.live="qrBorderOpacity"
                                                                         min="0" max="100"
                                                                         value="100"
@@ -1656,6 +1660,7 @@
                                                         <div class="p-3 border border-gray-300 rounded-lg bg-gray-50">
                                                             <div class="flex items-center gap-2 mb-2">
                                                                 <input type="color"
+                                                                    id="qrDarkColorPicker"
                                                                     wire:model.live="qrDarkColorPicker"
                                                                     value="#000000"
                                                                     class="w-12 h-12 border-2 border-gray-300 rounded-lg cursor-pointer">
@@ -1666,9 +1671,10 @@
                                                                     </label>
                                                                     <label class="block mb-1 text-xs text-gray-600">
                                                                         Transparansi:
-                                                                        <span>{{ $qrDarkOpacity ?? 100 }}%</span>
+                                                                        <span id="qrDarkOutput">{{ $qrDarkOpacity ?? 100 }}%</span>
                                                                     </label>
                                                                     <input type="range"
+                                                                        id="qrDarkOpacity"
                                                                         wire:model.live="qrDarkOpacity"
                                                                         min="0" max="100"
                                                                         value="100"
@@ -2317,24 +2323,21 @@
                 const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
                 if (!iframeDoc) return;
 
-                // Get current hover settings from Livewire component
-                let component = Livewire.find('edit-tautan');
-                if (!component) {
-                    // Try alternative method to find component
-                    const components = Livewire.all();
-                    component = components.find(comp => comp.name === 'edit-tautan');
+                // Get current hover settings from Livewire component using @this
+                if (typeof @this === 'undefined') {
+                    console.warn('Livewire component not available for hover effects');
+                    return;
                 }
-                if (!component) return;
 
                 const hoverSettings = {
-                    backgroundStart: component.get('styles.buttonHover.backgroundStart') || '#FFD700',
-                    backgroundEnd: component.get('styles.buttonHover.backgroundEnd') || '#FFFFFF',
-                    textColor: component.get('styles.buttonHover.color') || '#002366',
-                    borderColor: component.get('styles.buttonHover.borderColor') || '#FFD700',
-                    borderWidth: component.get('styles.buttonHover.borderWidth') || 2,
-                    borderStyle: component.get('styles.buttonHover.borderStyle') || 'solid',
-                    glowColor: component.get('styles.buttonHover.glowColor') || '#FFD700',
-                    glowBlur: component.get('styles.buttonHover.glowBlur') || 30
+                    backgroundStart: @this.get('styles.buttonHover.backgroundStart') || '#FFD700',
+                    backgroundEnd: @this.get('styles.buttonHover.backgroundEnd') || '#FFFFFF',
+                    textColor: @this.get('styles.buttonHover.color') || '#002366',
+                    borderColor: @this.get('styles.buttonHover.borderColor') || '#FFD700',
+                    borderWidth: @this.get('styles.buttonHover.borderWidth') || 2,
+                    borderStyle: @this.get('styles.buttonHover.borderStyle') || 'solid',
+                    glowColor: @this.get('styles.buttonHover.glowColor') || '#FFD700',
+                    glowBlur: @this.get('styles.buttonHover.glowBlur') || 30
                 };
 
                 console.log('🎨 Preview Hover Settings:', hoverSettings);
@@ -2715,22 +2718,16 @@
         function updateQRColorPickersFromLivewire() {
             // Special function to update QR color pickers from Livewire model values
             try {
-                // Get QR color picker values from Livewire component
-                let component = Livewire.find('edit-tautan');
-                if (!component) {
-                    // Try alternative method to find component
-                    const components = Livewire.all();
-                    component = components.find(comp => comp.name === 'edit-tautan');
-                }
-                if (!component) {
-                    console.warn('Edit tautan component not found');
+                // Get QR color picker values from Livewire component using @this
+                if (typeof @this === 'undefined') {
+                    console.warn('Livewire component not available for QR color picker update');
                     return;
                 }
 
                 // Get QR color values from Livewire state
-                const qrBgColor = component.get('qrBackgroundColorPicker');
-                const qrBorderColor = component.get('qrBorderColorPicker');
-                const qrDarkColor = component.get('qrDarkColorPicker');
+                const qrBgColor = @this.get('qrBackgroundColorPicker');
+                const qrBorderColor = @this.get('qrBorderColorPicker');
+                const qrDarkColor = @this.get('qrDarkColorPicker');
 
                 console.log('🎨 Updating QR Color Pickers from Livewire:');
                 console.log('   BG Color:', qrBgColor);
@@ -2925,6 +2922,87 @@
             });
 
             console.log(`✅ Color sync completed: ${syncedCount} synced, ${failedCount} failed`);
+        }
+
+        function refreshQRColorsFromLivewire() {
+            // Function to refresh QR colors from Livewire state and sync with color pickers
+            console.log('🔄 refreshQRColorsFromLivewire() called');
+
+            try {
+                // Get QR color values from Livewire state using @this (Alpine/Livewire method)
+                if (typeof @this === 'undefined') {
+                    console.warn('Livewire component not available for QR color refresh');
+                    return;
+                }
+
+                // Get QR color values from Livewire state
+                const qrBgColor = @this.get('qrBackgroundColorPicker');
+                const qrBorderColor = @this.get('qrBorderColorPicker');
+                const qrDarkColor = @this.get('qrDarkColorPicker');
+                const qrBgOpacity = @this.get('qrBackgroundOpacity');
+                const qrBorderOpacity = @this.get('qrBorderOpacity');
+                const qrDarkOpacity = @this.get('qrDarkOpacity');
+
+                console.log('🎨 Refreshing QR Colors from Livewire:');
+                console.log('   BG Color:', qrBgColor, 'Opacity:', qrBgOpacity + '%');
+                console.log('   Border Color:', qrBorderColor, 'Opacity:', qrBorderOpacity + '%');
+                console.log('   Dark Color:', qrDarkColor, 'Opacity:', qrDarkOpacity + '%');
+
+                // Update QR color picker inputs
+                const bgPicker = document.getElementById('qrBackgroundColorPicker');
+                const borderPicker = document.getElementById('qrBorderColorPicker');
+                const darkPicker = document.getElementById('qrDarkColorPicker');
+
+                if (bgPicker && qrBgColor) {
+                    bgPicker.value = qrBgColor;
+                    console.log('✅ Updated QR Background Color picker');
+                }
+                if (borderPicker && qrBorderColor) {
+                    borderPicker.value = qrBorderColor;
+                    console.log('✅ Updated QR Border Color picker');
+                }
+                if (darkPicker && qrDarkColor) {
+                    darkPicker.value = qrDarkColor;
+                    console.log('✅ Updated QR Dark Color picker');
+                }
+
+                // Update opacity sliders
+                const bgOpacitySlider = document.getElementById('qrBackgroundOpacity');
+                const borderOpacitySlider = document.getElementById('qrBorderOpacity');
+                const darkOpacitySlider = document.getElementById('qrDarkOpacity');
+
+                if (bgOpacitySlider && qrBgOpacity !== undefined) {
+                    bgOpacitySlider.value = qrBgOpacity;
+                    const bgOutput = document.getElementById('qrBackgroundOutput');
+                    if (bgOutput) {
+                        bgOutput.textContent = qrBgOpacity + '%';
+                    }
+                    console.log('✅ Updated QR Background opacity');
+                }
+
+                if (borderOpacitySlider && qrBorderOpacity !== undefined) {
+                    borderOpacitySlider.value = qrBorderOpacity;
+                    const borderOutput = document.getElementById('qrBorderOutput');
+                    if (borderOutput) {
+                        borderOutput.textContent = qrBorderOpacity + '%';
+                    }
+                    console.log('✅ Updated QR Border opacity');
+                }
+
+                if (darkOpacitySlider && qrDarkOpacity !== undefined) {
+                    darkOpacitySlider.value = qrDarkOpacity;
+                    const darkOutput = document.getElementById('qrDarkOutput');
+                    if (darkOutput) {
+                        darkOutput.textContent = qrDarkOpacity + '%';
+                    }
+                    console.log('✅ Updated QR Dark opacity');
+                }
+
+                console.log('✅ QR Colors refreshed successfully from Livewire state');
+
+            } catch (error) {
+                console.warn('Error refreshing QR colors from Livewire:', error);
+            }
         }
 
         // Manual trigger function for debugging
