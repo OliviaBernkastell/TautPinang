@@ -2017,6 +2017,36 @@
     </div>
 
     <script>
+        // Fungsi untuk deteksi dan mengatur tema otomatis berdasarkan preferensi sistem
+        function detectAndSetSystemTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+            // Jika tidak ada tema yang tersimpan, gunakan preferensi sistem
+            if (!savedTheme) {
+                const theme = systemPrefersDark ? 'dark' : 'light';
+                document.documentElement.setAttribute('data-theme', theme);
+                localStorage.setItem('theme', theme);
+            } else {
+                // Gunakan tema yang tersimpan
+                document.documentElement.setAttribute('data-theme', savedTheme);
+            }
+        }
+
+        // Inisialisasi tema sebelum DOM loaded
+        detectAndSetSystemTheme();
+
+        // Listener untuk perubahan preferensi sistem
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+            const savedTheme = localStorage.getItem('theme');
+            // Hanya update otomatis jika user tidak pernah mengatur tema manual
+            if (!savedTheme || savedTheme === 'system') {
+                const newTheme = e.matches ? 'dark' : 'light';
+                document.documentElement.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+            }
+        });
+
         // ===== VARIABEL GLOBAL =====
         let initializedPickers = new Set();
         let updateTimeouts = new Map();
@@ -2024,8 +2054,10 @@
 
         // ===== MAIN INITIALIZATION =====
         document.addEventListener('DOMContentLoaded', function() {
+            // Pastikan tema sudah terdeteksi dengan benar
+            detectAndSetSystemTheme();
 
-            console.log('🚀 Initializing Taut Pinang form...');
+            console.log('🚀 Initializing Taut Pinang edit form...');
 
             // Inisialisasi komponen utama
             initializeRadioButtons();
@@ -3491,6 +3523,283 @@ User: [PLACEHOLDER - GANTI DENGAN PERMINTAAN TEMA]`;
 
     <!-- Complete CSS untuk Taut Pinang - Clean & Organized -->
     <style>
+        /* ===== DARK MODE STYLES ===== */
+
+        /* Header - Dark Mode */
+        [data-theme="dark"] .text-gray-800 {
+            color: #e5e7eb !important;
+        }
+
+        /* Header container background */
+        [data-theme="dark"] [class*="px-4"][class*="py-6"],
+        [data-theme="dark"] [class*="sm:px-6"],
+        [data-theme="dark"] [class*="lg:px-8"] {
+            background: rgba(17, 24, 39, 0.95) !important;
+            border-bottom: 1px solid rgba(55, 65, 81, 0.3) !important;
+        }
+
+        /* Alert Messages - Dark Mode */
+        [data-theme="dark"] .text-green-700 {
+            color: #34d399 !important;
+        }
+
+        [data-theme="dark"] .bg-green-100 {
+            background: rgba(16, 185, 129, 0.1) !important;
+            border-color: rgba(16, 185, 129, 0.3) !important;
+        }
+
+        [data-theme="dark"] .text-red-700 {
+            color: #f87171 !important;
+        }
+
+        [data-theme="dark"] .bg-red-100 {
+            background: rgba(239, 68, 68, 0.1) !important;
+            border-color: rgba(239, 68, 68, 0.3) !important;
+        }
+
+        [data-theme="dark"] .text-blue-800 {
+            color: #60a5fa !important;
+        }
+
+        [data-theme="dark"] .bg-blue-50 {
+            background: rgba(59, 130, 246, 0.1) !important;
+            border-color: rgba(59, 130, 246, 0.3) !important;
+        }
+
+        [data-theme="dark"] .text-blue-700 {
+            color: #3b82f6 !important;
+        }
+
+        [data-theme="dark"] .text-blue-900 {
+            color: #1d4ed8 !important;
+        }
+
+        /* Main Container - Dark Mode */
+        [data-theme="dark"] .bg-white {
+            background: rgba(17, 24, 39, 0.95) !important;
+        }
+
+        [data-theme="dark"] .shadow-xl {
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2) !important;
+        }
+
+        /* Form Sections - Dark Mode */
+        [data-theme="dark"] .text-lg {
+            color: #f3f4f6 !important;
+        }
+
+        [data-theme="dark"] .text-gray-500 {
+            color: #9ca3af !important;
+        }
+
+        /* Info Box - Dark Mode */
+        [data-theme="dark"] .border-blue-200 {
+            border-color: rgba(59, 130, 246, 0.3) !important;
+        }
+
+        [data-theme="dark"] .bg-blue-100 {
+            background: rgba(59, 130, 246, 0.1) !important;
+        }
+
+        [data-theme="dark"] .text-blue-600 {
+            color: #3b82f6 !important;
+        }
+
+        /* Form Labels - Dark Mode */
+        [data-theme="dark"] .text-gray-700 {
+            color: #d1d5db !important;
+        }
+
+        [data-theme="dark"] .text-gray-600 {
+            color: #9ca3af !important;
+        }
+
+        /* Form Controls - Dark Mode */
+        [data-theme="dark"] .border-gray-300 {
+            border-color: rgba(55, 65, 81, 0.5) !important;
+        }
+
+        [data-theme="dark"] .bg-gray-100 {
+            background: rgba(31, 41, 55, 0.5) !important;
+        }
+
+        [data-theme="dark"] .bg-gray-50 {
+            background: rgba(31, 41, 55, 0.3) !important;
+        }
+
+        /* Radio Buttons - Dark Mode */
+        [data-theme="dark"] .text-blue-600 {
+            color: #3b82f6 !important;
+        }
+
+        [data-theme="dark"] .text-gray-900 {
+            color: #f3f4f6 !important;
+        }
+
+        /* Preview Elements - Dark Mode */
+        [data-theme="dark"] .text-gray-400 {
+            color: #9ca3af !important;
+        }
+
+        /* Input Fields - Dark Mode */
+        [data-theme="dark"] input[type="text"],
+        [data-theme="dark"] input[type="url"],
+        [data-theme="dark"] input[type="number"],
+        [data-theme="dark"] textarea,
+        [data-theme="dark"] select {
+            background: rgba(31, 41, 55, 0.8) !important;
+            border-color: rgba(55, 65, 81, 0.5) !important;
+            color: #f3f4f6 !important;
+        }
+
+        [data-theme="dark"] input[type="text"]:focus,
+        [data-theme="dark"] input[type="url"]:focus,
+        [data-theme="dark"] input[type="number"]:focus,
+        [data-theme="dark"] textarea:focus,
+        [data-theme="dark"] select:focus {
+            border-color: rgba(59, 130, 246, 0.5) !important;
+            background: rgba(31, 41, 55, 0.9) !important;
+        }
+
+        /* Buttons - Dark Mode */
+        [data-theme="dark"] .text-gray-700 {
+            color: #d1d5db !important;
+        }
+
+        [data-theme="dark"] .bg-gray-100:hover {
+            background: rgba(55, 65, 81, 0.5) !important;
+        }
+
+        /* Preview Container - Dark Mode */
+        [data-theme="dark"] .sticky .bg-white {
+            background: rgba(17, 24, 39, 0.95) !important;
+        }
+
+        /* Upload Area - Dark Mode */
+        [data-theme="dark"] .border-gray-200 {
+            border-color: rgba(55, 65, 81, 0.3) !important;
+        }
+
+        [data-theme="dark"] .bg-yellow-50 {
+            background: rgba(217, 119, 6, 0.1) !important;
+            border-color: rgba(217, 119, 6, 0.3) !important;
+        }
+
+        [data-theme="dark"] .text-yellow-800 {
+            color: #fbbf24 !important;
+        }
+
+        [data-theme="dark"] .text-yellow-700 {
+            color: #f59e0b !important;
+        }
+
+        /* Color Picker Controls - Dark Mode */
+        [data-theme="dark"] .border-gray-300 {
+            border-color: rgba(55, 65, 81, 0.5) !important;
+        }
+
+        [data-theme="dark"] .bg-gray-50 {
+            background: rgba(31, 41, 55, 0.3) !important;
+        }
+
+        /* Tab Navigation - Dark Mode */
+        [data-theme="dark"] .text-gray-500 {
+            color: #9ca3af !important;
+        }
+
+        [data-theme="dark"] .text-gray-700 {
+            color: #d1d5db !important;
+        }
+
+        [data-theme="dark"] .text-blue-600 {
+            color: #3b82f6 !important;
+        }
+
+        [data-theme="dark"] .bg-blue-50 {
+            background: rgba(59, 130, 246, 0.1) !important;
+        }
+
+        /* Tab Content - Dark Mode */
+        [data-theme="dark"] .text-gray-800 {
+            color: #e5e7eb !important;
+        }
+
+        [data-theme="dark"] .text-gray-600 {
+            color: #9ca3af !important;
+        }
+
+        /* Range Sliders - Dark Mode */
+        [data-theme="dark"] .slider {
+            background: linear-gradient(to right, #4b5563, #3b82f6) !important;
+        }
+
+        [data-theme="dark"] .slider::-webkit-slider-thumb {
+            background: #3b82f6 !important;
+            border: 1px solid rgba(59, 130, 246, 0.3) !important;
+        }
+
+        [data-theme="dark"] .slider::-moz-range-thumb {
+            background: #3b82f6 !important;
+            border: 1px solid rgba(59, 130, 246, 0.3) !important;
+        }
+
+        /* Mobile Preview - Dark Mode */
+        [data-theme="dark"] .bg-gray-900 {
+            background: #111827 !important;
+        }
+
+        /* Desktop Preview - Dark Mode */
+        [data-theme="dark"] .bg-gray-200 {
+            background: rgba(55, 65, 81, 0.5) !important;
+        }
+
+        [data-theme="dark"] .border-gray-300 {
+            border-color: rgba(55, 65, 81, 0.5) !important;
+        }
+
+        [data-theme="dark"] .text-gray-400 {
+            color: #9ca3af !important;
+        }
+
+        [data-theme="dark"] .bg-gray-700 {
+            background: rgba(55, 65, 81, 0.8) !important;
+        }
+
+        /* Links - Dark Mode */
+        [data-theme="dark"] .text-blue-900:hover {
+            color: #60a5fa !important;
+        }
+
+        [data-theme="dark"] .hover\:text-blue-900:hover {
+            color: #60a5fa !important;
+        }
+
+        /* Error Messages - Dark Mode */
+        [data-theme="dark"] .text-red-500 {
+            color: #f87171 !important;
+        }
+
+        /* Success Messages - Dark Mode */
+        [data-theme="dark"] .text-green-600 {
+            color: #34d399 !important;
+        }
+
+        /* Loading States - Dark Mode */
+        [data-theme="dark"] .text-blue-600 {
+            color: #3b82f6 !important;
+        }
+
+        /* Toast Notifications - Dark Mode */
+        [data-theme="dark"] .toast-notification {
+            background: rgba(31, 41, 55, 0.95) !important;
+            border: 1px solid rgba(55, 65, 81, 0.3) !important;
+        }
+
+        /* Override untuk text-gray-800 di semua konteks */
+        [data-theme="dark"] [class*="text-gray-800"] {
+            color: #e5e7eb !important;
+        }
+
         /* ===== ANIMATIONS ===== */
         @keyframes fade-in {
             from {
