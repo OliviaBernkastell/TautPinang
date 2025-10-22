@@ -61,4 +61,5 @@ Route::middleware([
 */
 Route::get('/{slug}', [TautanController::class, 'show'])
     ->where('slug', '[a-zA-Z0-9\-_]+')
+    ->middleware('tautan.status')
     ->name('tautan.show');
