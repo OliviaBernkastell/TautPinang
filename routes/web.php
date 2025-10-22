@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TautanController; // ✅ TAMBAH INI
 use App\Http\Controllers\GoogleController;
+use App\Http\Controllers\UserManagementController;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,23 +27,27 @@ Route::get('/auth/google/callback', [GoogleController::class, 'handleGoogleCallb
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
-    'verified'
+    'verified',
+    'active' // Check user status - prevents disabled users from accessing
 ])->group(function () {
 
-    // Dashboard
+    // Dashboard - Accessible by all authenticated active users
     Route::get('/dashboard', App\Http\Livewire\Dashboard::class)->name('dashboard');
 
-    // Buat Tautan
+    // Buat Tautan - Accessible by all authenticated active users
     Route::get('/buat-tautan', App\Http\Livewire\BuatTautan::class)->name('buat-tautan');
 
-    // Kelola Tautan
+    // Kelola Tautan - Accessible by all authenticated active users (will filter by user in controller)
     Route::get('/kelola-tautan', App\Http\Livewire\KelolaTautan::class)->name('kelola-tautan');
 
-    // Edit Tautan - Route baru
-    Route::get('/edit-tautan/{id}', App\Http\Livewire\EditTautan::class)->name('edit-tautan');
+    // Edit Tautan - Accessible by all authenticated active users (RoleMiddleware will check ownership)
+    Route::get('/edit-tautan/{id}', App\Http\Livewire\EditTautan::class)->name('edit-tautan')->middleware('role');
 
-    // Test Tautan - Debug Route
-    Route::get('/test-tautan', [TautanController::class, 'testAllData'])->name('tautan.test');
+    // User Management - Admin only route
+    Route::get('/user-management', App\Http\Livewire\UserManagement::class)->name('user-management')->middleware('role');
+
+    // Test Tautan - Admin only route
+    Route::get('/test-tautan', [TautanController::class, 'testAllData'])->name('tautan.test')->middleware('admin');
 });
 
 /*

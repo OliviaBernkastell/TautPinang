@@ -102,6 +102,31 @@
                             <form class="space-y-6" action="{{ route('login') }}" method="POST" id="loginForm">
                                 @csrf
 
+                                <!-- Session Error Messages -->
+                                @if (session('error'))
+                                    <div class="error-message">
+                                        <div class="flex items-start space-x-3">
+                                            <i class="mt-1 text-red-500 fas fa-ban"></i>
+                                            <div>
+                                                <h4 class="text-sm font-semibold text-red-800">Akses Ditolak</h4>
+                                                <p class="mt-1 text-sm text-red-700">{{ session('error') }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
+
+                                <!-- Success Messages -->
+                                @if (session('success'))
+                                    <div class="success-message">
+                                        <div class="flex items-start space-x-3">
+                                            <i class="mt-1 text-green-500 fas fa-check-circle"></i>
+                                            <div>
+                                                <p class="mt-1 text-sm text-green-700">{{ session('success') }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
+
                                 <!-- Error Messages -->
                                 @if ($errors->any())
                                     <div class="error-message">
@@ -721,8 +746,8 @@
         }
 
         [data-theme="dark"] .error-message {
-            background: rgba(245, 158, 11, 0.1);
-            border-color: rgba(245, 158, 11, 0.3);
+            background: rgba(220, 38, 38, 0.15);
+            border-color: rgba(239, 68, 68, 0.3);
         }
 
         .error-text {
@@ -732,7 +757,20 @@
         }
 
         [data-theme="dark"] .error-text {
-            color: #fbbf24;
+            color: #f87171;
+        }
+
+        /* Dark theme untuk error message styles */
+        [data-theme="dark"] .text-red-800 {
+            color: #fca5a5 !important;
+        }
+
+        [data-theme="dark"] .text-red-700 {
+            color: #f87171 !important;
+        }
+
+        [data-theme="dark"] .text-green-700 {
+            color: #86efac !important;
         }
 
         /* Spinner Styles */

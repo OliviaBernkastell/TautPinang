@@ -30,22 +30,36 @@ class GoogleController extends Controller
             $user = User::where('google_id', $googleUser->getId())->first();
 
             if ($user) {
-                // User sudah ada, login langsung
-                Auth::login($user);
-                return redirect()->intended('/dashboard');
+                // User sudah ada, cek status
+                if ($user->status === 'active') {
+                    Auth::login($user);
+                    return redirect()->intended('/dashboard');
+                } else {
+                    // User tidak aktif, redirect ke login dengan error
+                    $statusText = $user->status === 'inactive' ? 'dinonaktifkan' : 'dinonaktifkan permanen';
+                    return redirect()->route('login')
+                        ->with('error', 'Akun Anda telah ' . $statusText . '. Silakan hubungi administrator untuk akses kembali.');
+                }
             } else {
                 // Cek apakah email sudah terdaftar
                 $existingUser = User::where('email', $googleUser->getEmail())->first();
 
                 if ($existingUser) {
-                    // Link akun Google ke user yang sudah ada
-                    $existingUser->google_id = $googleUser->getId();
-                    $existingUser->avatar = $googleUser->getAvatar();
-                    $existingUser->save();
-                    Auth::login($existingUser);
-                    return redirect()->intended('/dashboard');
+                    // Link akun Google ke user yang sudah ada, tapi cek status dulu
+                    if ($existingUser->status === 'active') {
+                        $existingUser->google_id = $googleUser->getId();
+                        $existingUser->avatar = $googleUser->getAvatar();
+                        $existingUser->save();
+                        Auth::login($existingUser);
+                        return redirect()->intended('/dashboard');
+                    } else {
+                        // User tidak aktif, redirect ke login dengan error
+                        $statusText = $existingUser->status === 'inactive' ? 'dinonaktifkan' : 'dinonaktifkan permanen';
+                        return redirect()->route('login')
+                            ->with('error', 'Akun Anda telah ' . $statusText . '. Silakan hubungi administrator untuk akses kembali.');
+                    }
                 } else {
-                    // Buat user baru
+                    // Buat user baru (default status = active)
                     $newUser = User::create([
                         'name' => $googleUser->getName(),
                         'email' => $googleUser->getEmail(),
@@ -53,6 +67,7 @@ class GoogleController extends Controller
                         'avatar' => $googleUser->getAvatar(),
                         'password' => bcrypt(Str::random(24)), // Random password
                         'email_verified_at' => now(),
+                        'status' => 'active', // New users default to active
                     ]);
 
                     Auth::login($newUser);

@@ -18,7 +18,8 @@
       "Bash(start http://127.0.0.1:8000/dashboard)",
       "Bash(start http://127.0.0.1:8000/user/profile)",
       "Bash(start http://127.0.0.1:8000/login)",
-      "Bash(start:*)"
+      "Bash(start:*)",
+      "Bash(find:*)"
     ]
   }
 }

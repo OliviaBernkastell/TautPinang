@@ -83,6 +83,21 @@
                     </a>
                 </li>
 
+                <!-- User Management - Admin Only -->
+                @if(auth()->user() && auth()->user()->isAdmin())
+                    <li>
+                        <a href="{{ route('user-management') }}" wire:navigate
+                            class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group {{ request()->routeIs('user-management') ? 'bg-gray-100 dark:bg-gray-700' : '' }}">
+                            <svg class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
+                                aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 18">
+                                <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/>
+                                <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 1 1 0 000 2H6a2 2 0 100 4h2a2 2 0 100 4H6a1 1 0 100 2 2 2 0 002-2v-1a1 1 0 112 0v1a4 4 0 11-8 0V5z" clip-rule="evenodd"/>
+                            </svg>
+                            <span class="flex-1 ms-3 whitespace-nowrap">User Management</span>
+                        </a>
+                    </li>
+                @endif
+
             </ul>
 
             <!-- Divider -->
@@ -357,6 +372,23 @@
         /* Transitions */
         [data-theme="dark"] * {
             transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* User Management Menu - Additional Dark Mode Support */
+        [data-theme="dark"] .hover\:bg-gray-100:hover {
+            background: rgba(55, 65, 81, 0.5) !important;
+        }
+
+        [data-theme="dark"] .group:hover .group-hover\:text-gray-900 {
+            color: #f3f4f6 !important;
+        }
+
+        [data-theme="dark"] .group:hover .group-hover\:text-white {
+            color: #f3f4f6 !important;
+        }
+
+        [data-theme="dark"] .route-active {
+            background: rgba(55, 65, 81, 0.5) !important;
         }
     </style>
 </body>

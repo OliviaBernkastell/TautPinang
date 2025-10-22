@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -174,7 +175,14 @@
         }
 
         /* Transitions */
-        body, .bg-white, .bg-gray-50, .text-gray-900, .text-gray-800, .text-gray-600, .text-gray-500, .text-gray-400 {
+        body,
+        .bg-white,
+        .bg-gray-50,
+        .text-gray-900,
+        .text-gray-800,
+        .text-gray-600,
+        .text-gray-500,
+        .text-gray-400 {
             transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
         }
     </style>
@@ -182,11 +190,16 @@
 
 <body>
     <button class="dark-mode-toggle" onclick="toggleTheme()" title="Toggle Dark Mode">
-        <svg class="sun-icon w-5 h-5 text-yellow-500 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-9m9 9h9m-9 9h-9m9-9v9m0-9v9"></path>
+        <svg class="hidden w-5 h-5 text-yellow-500 sun-icon dark:block" fill="none" stroke="currentColor"
+            viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 3v1m0 16v1m9-9h-9m9 9h9m-9 9h-9m9-9v9m0-9v9"></path>
         </svg>
-        <svg class="moon-icon w-5 h-5 text-gray-700 block dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9 9 0 001.708 2.314L12 6.586l-7.354 7.354A9 9 0 002.646 18.354 9 9 0 006.646-1.614l1.708-2.928L12 17.414l7.354-7.354A9 9 0 0021.354 15.354z"></path>
+        <svg class="block w-5 h-5 text-gray-700 moon-icon dark:hidden" fill="none" stroke="currentColor"
+            viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M20.354 15.354A9 9 0 018.646 3.646 9 9 0 001.708 2.314L12 6.586l-7.354 7.354A9 9 0 002.646 18.354 9 9 0 006.646-1.614l1.708-2.928L12 17.414l7.354-7.354A9 9 0 0021.354 15.354z">
+            </path>
         </svg>
     </button>
 
@@ -237,4 +250,5 @@
 
     {{ $slot }}
 </body>
+
 </html>
