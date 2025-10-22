@@ -965,10 +965,15 @@
                                                     <div class="p-3 border border-gray-300 rounded-lg bg-gray-50">
                                                         <div class="flex items-center gap-2 mb-2">
                                                             <input type="color" id="hoverBgStartColor"
+                                                                wire:model.live.debounce.300ms="styles.buttonHover.backgroundStart"
                                                                 value="#ffd700"
                                                                 class="w-12 h-12 border-2 border-gray-300 rounded-lg cursor-pointer">
                                                             <div class="flex-1">
+                                                                <label class="block mb-1 text-xs text-gray-600">
+                                                                    Transparansi: <span id="hoverBgStartOpacity">100%</span>
+                                                                </label>
                                                                 <input type="range" id="hoverBgStartRange"
+                                                                    wire:model.live.debounce.300ms="styles.buttonHover.backgroundStartOpacity"
                                                                     min="0" max="100" value="100"
                                                                     class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider">
                                                             </div>
@@ -987,10 +992,15 @@
                                                     <div class="p-3 border border-gray-300 rounded-lg bg-gray-50">
                                                         <div class="flex items-center gap-2 mb-2">
                                                             <input type="color" id="hoverBgEndColor"
+                                                                wire:model.live.debounce.300ms="styles.buttonHover.backgroundEnd"
                                                                 value="#ffffff"
                                                                 class="w-12 h-12 border-2 border-gray-300 rounded-lg cursor-pointer">
                                                             <div class="flex-1">
+                                                                <label class="block mb-1 text-xs text-gray-600">
+                                                                    Transparansi: <span id="hoverBgEndOpacity">100%</span>
+                                                                </label>
                                                                 <input type="range" id="hoverBgEndRange"
+                                                                    wire:model.live.debounce.300ms="styles.buttonHover.backgroundEndOpacity"
                                                                     min="0" max="100" value="100"
                                                                     class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider">
                                                             </div>
@@ -2026,6 +2036,55 @@
 
             console.log('✅ All components initialized');
 
+            // Add event listeners for hover color pickers to update preview in real-time
+            setTimeout(() => {
+                const hoverColorPickers = [
+                    'hoverBgStartColor',
+                    'hoverBgEndColor',
+                    'hoverTextColor',
+                    'hoverBorderColor',
+                    'hoverGlowColor'
+                ];
+
+                hoverColorPickers.forEach(pickerId => {
+                    const picker = document.getElementById(pickerId);
+                    if (picker) {
+                        picker.addEventListener('input', function() {
+                            console.log(`🎨 Hover color changed: ${pickerId} = ${this.value}`);
+                            // Update hover effects in preview immediately
+                            const iframe = document.getElementById('previewFrame');
+                            if (iframe) {
+                                setTimeout(() => {
+                                    addHoverEffectsToPreview(iframe);
+                                }, 100);
+                            }
+                        });
+                    }
+                });
+
+                // Also listen to range slider changes
+                const hoverRangeSliders = [
+                    'hoverBorderRange',
+                    'hoverGlowRange'
+                ];
+
+                hoverRangeSliders.forEach(sliderId => {
+                    const slider = document.getElementById(sliderId);
+                    if (slider) {
+                        slider.addEventListener('input', function() {
+                            console.log(`🎨 Hover range changed: ${sliderId} = ${this.value}`);
+                            // Update hover effects in preview immediately
+                            const iframe = document.getElementById('previewFrame');
+                            if (iframe) {
+                                setTimeout(() => {
+                                    addHoverEffectsToPreview(iframe);
+                                }, 100);
+                            }
+                        });
+                    }
+                });
+            }, 1000);
+
             // ===== LIVEWIRE HOOKS (SATU TEMPAT UNTUK SEMUA) =====
 
             // Hook utama untuk update setelah Livewire response
@@ -2044,7 +2103,13 @@
                         updateAllRangeSlidersFromLivewire();
                         // Refresh QR colors from Livewire state
                         refreshQRColorsFromLivewire();
-                    }, 100);
+
+                        // CRITICAL: Re-apply hover effects after Livewire update
+                        const iframe = document.getElementById('previewFrame');
+                        if (iframe) {
+                            addHoverEffectsToPreview(iframe);
+                        }
+                    }, 300); // Increased delay to ensure iframe is fully loaded
 
                     // Reset processing flag
                     isProcessingUpload = false;
@@ -2078,6 +2143,11 @@
                 showToast('✨ JSON berhasil update UI styling fields!', 'success');
                 setTimeout(() => {
                     updateAllColorPickersFromStyles();
+                    // Update hover effects in preview
+                    const iframe = document.getElementById('previewFrame');
+                    if (iframe) {
+                        addHoverEffectsToPreview(iframe);
+                    }
                 }, 200);
             });
 
@@ -2256,7 +2326,95 @@
                 const newSrcdoc = iframe.getAttribute('srcdoc');
                 if (newSrcdoc && iframe.srcdoc !== newSrcdoc) {
                     iframe.srcdoc = newSrcdoc;
+
+                    // Tambahkan hover effects setelah iframe load dengan multiple attempts
+                    let attempts = 0;
+                    const maxAttempts = 10;
+
+                    const tryAddHoverEffects = () => {
+                        attempts++;
+                        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                        const buttons = iframeDoc ? iframeDoc.querySelectorAll('.link-button') : [];
+
+                        if (buttons.length > 0) {
+                            console.log(`✅ Found ${buttons.length} buttons in preview, adding hover effects...`);
+                            addHoverEffectsToPreview(iframe);
+                        } else if (attempts < maxAttempts) {
+                            console.log(`⏳ Attempt ${attempts}: No buttons found yet, retrying...`);
+                            setTimeout(tryAddHoverEffects, 200);
+                        } else {
+                            console.warn('❌ Could not find buttons in preview after multiple attempts');
+                        }
+                    };
+
+                    setTimeout(tryAddHoverEffects, 100);
                 }
+            }
+        }
+
+        function addHoverEffectsToPreview(iframe) {
+            try {
+                const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                if (!iframeDoc) {
+                    console.warn('⚠️ Cannot access iframe document');
+                    return;
+                }
+
+                // 🎯 PERBAIKAN: CSS SUDAH MENGHANDLE HOVER, JANGAN GUNAKAN JAVASCRIPT!
+                // CSS sudah mencakup semua hover effects (background gradient, color, border, glow)
+                // Jangan tambah JavaScript event listeners karena akan override CSS hover
+
+                // Get current hover settings from Livewire component (untuk debug saja)
+                let component = Livewire.find('buat-tautan');
+                if (!component) {
+                    // Try alternative method to find component
+                    const components = Livewire.all();
+                    component = components.find(comp => comp.name === 'buat-tautan');
+                }
+                if (!component) {
+                    console.warn('⚠️ Cannot find Livewire component');
+                    return;
+                }
+
+                const styles = component.get('styles') || {};
+                const buttonHover = styles.buttonHover || {};
+
+                console.log('✅ CSS Hover is active with settings:', {
+                    backgroundStart: buttonHover.backgroundStart || '#FFD700',
+                    backgroundEnd: buttonHover.backgroundEnd || '#FFFFFF',
+                    textColor: buttonHover.color || '#002366',
+                    borderColor: buttonHover.borderColor || '#FFD700',
+                    borderWidth: buttonHover.borderWidth || 2,
+                    borderStyle: buttonHover.borderStyle || 'solid',
+                    glowColor: buttonHover.glowColor || '#FFD700',
+                    glowBlur: buttonHover.glowBlur || 30
+                });
+
+                // Hapus JavaScript hover handlers yang mungkin ada
+                const linkButtons = iframeDoc.querySelectorAll('.link-button');
+                console.log(`🔍 Found ${linkButtons.length} link buttons, removing JavaScript hover handlers`);
+
+                linkButtons.forEach((button, index) => {
+                    // Hapus JavaScript hover handlers agar CSS hover bisa bekerja
+                    if (button._hoverEnterHandler) {
+                        button.removeEventListener('mouseenter', button._hoverEnterHandler);
+                        delete button._hoverEnterHandler;
+                    }
+                    if (button._hoverLeaveHandler) {
+                        button.removeEventListener('mouseleave', button._hoverLeaveHandler);
+                        delete button._hoverLeaveHandler;
+                    }
+
+                    // Reset inline styles yang mungkin mengganggu CSS hover
+                    // JANGAN hapus background dan color default karena ini diperlukan
+                    // CSS akan menghandle perubahan saat hover
+
+                    button.classList.add('css-hover-enabled');
+                });
+
+                console.log(`✅ CSS Hover effects enabled for ${linkButtons.length} buttons (JavaScript disabled)`);
+            } catch (error) {
+                console.warn('⚠️ Error setting up CSS hover:', error);
             }
         }
 

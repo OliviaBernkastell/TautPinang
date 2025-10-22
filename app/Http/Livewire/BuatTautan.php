@@ -78,7 +78,9 @@ class BuatTautan extends Component
         ],
         'buttonHover' => [
             'backgroundStart' => '#FFD700',
+            'backgroundStartOpacity' => 100,
             'backgroundEnd' => '#FFFFFF',
+            'backgroundEndOpacity' => 100,
             'color' => '#002366',
             'glowColor' => '#FFD700',
             'glowBlur' => '30',
@@ -278,6 +280,31 @@ class BuatTautan extends Component
         // Return as-is if already hex or other format
         return $color;
     }
+
+    /**
+     * Process color with opacity to create RGBA format
+     */
+    private function processColorWithOpacity($color, $opacity = 100)
+    {
+        // Remove # if present
+        $hexColor = ltrim($color, '#');
+
+        // Convert hex to RGB
+        if (strlen($hexColor) === 6) {
+            $r = hexdec(substr($hexColor, 0, 2));
+            $g = hexdec(substr($hexColor, 2, 2));
+            $b = hexdec(substr($hexColor, 4, 2));
+
+            // Convert opacity percentage to decimal (0-1)
+            $alpha = $opacity / 100;
+
+            // Return RGBA format
+            return "rgba({$r}, {$g}, {$b}, {$alpha})";
+        }
+
+        // Return as-is if not a valid hex color
+        return $color;
+    }
     // FIXED: Handle logo upload with multiple fallback methods
     public function updatedLogoUpload()
     {
@@ -472,7 +499,9 @@ class BuatTautan extends Component
             ],
             'buttonHover' => [
                 'backgroundStart' => '#FFD700',
+                'backgroundStartOpacity' => 100,
                 'backgroundEnd' => '#FFFFFF',
+                'backgroundEndOpacity' => 100,
                 'color' => '#002366',
                 'glowColor' => '#FFD700',
                 'glowBlur' => '30',
@@ -787,6 +816,92 @@ class BuatTautan extends Component
         $this->updateQRColorsFromPickers();
     }
 
+    // ===== BUTTON NORMAL SETTINGS - AUTO UPDATE PREVIEW =====
+    public function updatedStylesButtonBackgroundColor()
+    {
+        logger('🎨 Button Background Color updated: ' . ($this->styles['button']['backgroundColor'] ?? 'not set'));
+        $this->generatePreview();
+    }
+
+    public function updatedStylesButtonColor()
+    {
+        logger('🎨 Button Text Color updated: ' . ($this->styles['button']['color'] ?? 'not set'));
+        $this->generatePreview();
+    }
+
+    public function updatedStylesButtonBorderColor()
+    {
+        logger('🎨 Button Border Color updated: ' . ($this->styles['button']['borderColor'] ?? 'not set'));
+        $this->generatePreview();
+    }
+
+    public function updatedStylesButtonBorderWidth()
+    {
+        logger('🎨 Button Border Width updated: ' . ($this->styles['button']['borderWidth'] ?? 'not set'));
+        $this->generatePreview();
+    }
+
+    public function updatedStylesButtonBorderStyle()
+    {
+        logger('🎨 Button Border Style updated: ' . ($this->styles['button']['borderStyle'] ?? 'not set'));
+        $this->generatePreview();
+    }
+
+    public function updatedStylesButtonBorderRadius()
+    {
+        logger('🎨 Button Border Radius updated: ' . ($this->styles['button']['borderRadius'] ?? 'not set'));
+        $this->generatePreview();
+    }
+
+    // ===== BUTTON HOVER SETTINGS - AUTO UPDATE PREVIEW =====
+    public function updatedStylesButtonHoverBackgroundStart()
+    {
+        logger('🎨 Button Hover Background Start updated: ' . ($this->styles['buttonHover']['backgroundStart'] ?? 'not set'));
+        $this->generatePreview();
+    }
+
+    public function updatedStylesButtonHoverBackgroundEnd()
+    {
+        logger('🎨 Button Hover Background End updated: ' . ($this->styles['buttonHover']['backgroundEnd'] ?? 'not set'));
+        $this->generatePreview();
+    }
+
+    public function updatedStylesButtonHoverColor()
+    {
+        logger('🎨 Button Hover Text Color updated: ' . ($this->styles['buttonHover']['color'] ?? 'not set'));
+        $this->generatePreview();
+    }
+
+    public function updatedStylesButtonHoverBorderColor()
+    {
+        logger('🎨 Button Hover Border Color updated: ' . ($this->styles['buttonHover']['borderColor'] ?? 'not set'));
+        $this->generatePreview();
+    }
+
+    public function updatedStylesButtonHoverBorderWidth()
+    {
+        logger('🎨 Button Hover Border Width updated: ' . ($this->styles['buttonHover']['borderWidth'] ?? 'not set'));
+        $this->generatePreview();
+    }
+
+    public function updatedStylesButtonHoverBorderStyle()
+    {
+        logger('🎨 Button Hover Border Style updated: ' . ($this->styles['buttonHover']['borderStyle'] ?? 'not set'));
+        $this->generatePreview();
+    }
+
+    public function updatedStylesButtonHoverGlowColor()
+    {
+        logger('🎨 Button Hover Glow Color updated: ' . ($this->styles['buttonHover']['glowColor'] ?? 'not set'));
+        $this->generatePreview();
+    }
+
+    public function updatedStylesButtonHoverGlowBlur()
+    {
+        logger('🎨 Button Hover Glow Blur updated: ' . ($this->styles['buttonHover']['glowBlur'] ?? 'not set'));
+        $this->generatePreview();
+    }
+
     /**
      * Update QR colors from pickers with opacity
      */
@@ -1017,6 +1132,9 @@ class BuatTautan extends Component
 
             logger('✅ Tautan saved successfully: ' . $publicUrl);
             logger('📸 Logo URL: ' . $logoPath);
+
+            // ✅ Redirect ke halaman kelola tautan setelah berhasil menyimpan
+            return redirect()->route('kelola-tautan');
         } catch (\Exception $e) {
             $this->emit('databaseError', $e->getMessage());
             session()->flash('error', 'Gagal menyimpan: ' . $e->getMessage());
@@ -1059,19 +1177,21 @@ class BuatTautan extends Component
             $linkUrl = htmlspecialchars($link['url'], ENT_QUOTES, 'UTF-8');
             $linkJudul = htmlspecialchars($link['judul'], ENT_QUOTES, 'UTF-8');
 
-            // PERBAIKAN: Gunakan toggle system untuk per-link styling
-            if ($link['enableCustomStyling'] ?? false) {
-                // Custom styling ENABLED - gunakan warna dari link ini
+              // PERBAIKAN FINAL: CONTEK EXACT HTML structure dari public.blade.php!
+            // Conditional inline styling - HANYA untuk custom styling per-link (SAMA dengan public.blade.php)
+            $enableCustomStyling = $link['enableCustomStyling'] ?? false;
+
+            if ($enableCustomStyling) {
+                // Custom styling ENABLED - gunakan warna dari link ini (EXACT method dari public.blade.php)
                 $linkBgColor = htmlspecialchars($link['backgroundColor'] ?? $this->styles['button']['backgroundColor'], ENT_QUOTES, 'UTF-8');
                 $linkTextColor = htmlspecialchars($link['textColor'] ?? $this->styles['button']['color'], ENT_QUOTES, 'UTF-8');
-                // Build link dengan inline styles dari link ini
-                $linkItems .= "            <a href=\"{$linkUrl}\" class=\"link-button\" style=\"background: {$linkBgColor}; color: {$linkTextColor};\" target=\"_blank\" rel=\"noopener noreferrer\">{$linkJudul}</a>\n";
+                // Build inline style dengan warna dari link ini (EXACT method dari public.blade.php)
+                $inlineStyle = "background: {$linkBgColor}; color: {$linkTextColor};";
+                $linkItems .= "                        <a href=\"{$linkUrl}\" class=\"link-button custom-styled\" style=\"{$inlineStyle}\" target=\"_blank\" rel=\"noopener noreferrer\">\n                            {$linkJudul}\n                        </a>\n";
             } else {
-                // Custom styling DISABLED - gunakan global style dari styles['button']
-                $linkBgColor = htmlspecialchars($this->styles['button']['backgroundColor'], ENT_QUOTES, 'UTF-8');
-                $linkTextColor = htmlspecialchars($this->styles['button']['color'], ENT_QUOTES, 'UTF-8');
-                // Build link dengan inline styles dari global button style
-                $linkItems .= "            <a href=\"{$linkUrl}\" class=\"link-button\" style=\"background: {$linkBgColor}; color: {$linkTextColor};\" target=\"_blank\" rel=\"noopener noreferrer\">{$linkJudul}</a>\n";
+                // Custom styling DISABLED - gunakan global style dari styles['button'] (EXACT method dari public.blade.php)
+                // JANGAN gunakan inline style, biarkan CSS global yang handle hover effects! (EXACT dari public.blade.php)
+                $linkItems .= "                        <a href=\"{$linkUrl}\" class=\"link-button\" target=\"_blank\" rel=\"noopener noreferrer\">\n                            {$linkJudul}\n                        </a>\n";
             }
         }
 
@@ -1285,8 +1405,24 @@ class BuatTautan extends Component
         }, 2000);
     }
 
-    // Hover effects - UPDATED: menggunakan warna yang dinamis
+    // Custom link styling and hover effects
     document.addEventListener('DOMContentLoaded', function() {
+        // 🎯 PERBAIKAN: DISABLE applyCustomColors - CSS sudah menghandle semua styling!
+        // JANGAN gunakan JavaScript inline styles karena akan override CSS hover effects
+        // CSS sudah mencakup normal state dan hover state dengan benar
+
+        // // Apply custom colors to links with data attributes - DISABLED
+        // const customLinks = document.querySelectorAll('.link-custom');
+        // customLinks.forEach(link => {
+        //     const bgColor = link.getAttribute('data-bg-color');
+        //     const textColor = link.getAttribute('data-text-color');
+        //     if (bgColor) link.style.background = bgColor;
+        //     if (textColor) link.style.color = textColor;
+        // });
+
+        console.log('🎯 CSS-only styling enabled (JavaScript custom colors disabled)');
+
+        // Copy button hover effects
         const btn = document.getElementById('copyLinkBtn');
         const originalBg = '{$safeButtonBgColor}';
 
@@ -1786,17 +1922,36 @@ Author: BPS Kota Tanjungpinang
             $bg['direction'] ?? '135'
         );
 
-        $topGradient = $this->buildGradient(
-            $container['topGradientStart'] ?? '#FFD700',
-            $container['topGradientEnd'] ?? '#002366',
-            '90'
-        );
+        // PERBAIKAN: Samakan dengan public.blade.php method yang WORKING!
+        $topGradient = "linear-gradient(90deg, " . ($container['topGradientStart'] ?? '#FFD700') . ", " . ($container['topGradientEnd'] ?? '#002366') . ")";
 
-        $buttonHoverBg = $this->buildGradient(
-            $buttonHover['backgroundStart'] ?? '#FFD700',
-            $buttonHover['backgroundEnd'] ?? '#FFFFFF',
-            '135'
-        );
+        // PERBAIKAN CONTROLLER: CONTEK INLINE CSS dari public.blade.php!
+        // JANGAN generate CSS di PHP, gunakan inline variables di CSS template
+        $hoverBgStartRaw = $buttonHover['backgroundStart'] ?? '#FFD700';
+        $hoverBgEndRaw = $buttonHover['backgroundEnd'] ?? '#FFFFFF';
+        $hoverBgStartOpacity = $buttonHover['backgroundStartOpacity'] ?? 100;
+        $hoverBgEndOpacity = $buttonHover['backgroundEndOpacity'] ?? 100;
+
+        // Process dengan opacity untuk inline CSS
+        $hoverBgStartProcessed = $this->processColorWithOpacity($hoverBgStartRaw, $hoverBgStartOpacity);
+        $hoverBgEndProcessed = $this->processColorWithOpacity($hoverBgEndRaw, $hoverBgEndOpacity);
+
+        // Generate CSS string untuk inline injection (CONTEK DARI PUBLIC BLADE)
+        $buttonHoverBg = "linear-gradient(135deg, {$hoverBgStartProcessed}, {$hoverBgEndProcessed})";
+
+        // Debug: Log semua button colors dan CSS yang akan di-generate
+        logger('=== BUTTON CSS DEBUG ===');
+        logger('Button Background: ' . ($button['backgroundColor'] ?? 'NOT SET'));
+        logger('Button Text Color: ' . ($button['color'] ?? 'NOT SET'));
+        logger('Button Border: ' . ($button['borderWidth'] ?? 'NOT SET') . 'px ' . ($button['borderStyle'] ?? 'solid') . ' ' . ($button['borderColor'] ?? 'NOT SET'));
+        logger('buttonHover backgroundStart: ' . ($buttonHover['backgroundStart'] ?? 'NOT SET'));
+        logger('buttonHover backgroundEnd: ' . ($buttonHover['backgroundEnd'] ?? 'NOT SET'));
+        logger('buttonHover backgroundStartOpacity: ' . ($buttonHover['backgroundStartOpacity'] ?? 'NOT SET'));
+        logger('buttonHover backgroundEndOpacity: ' . ($buttonHover['backgroundEndOpacity'] ?? 'NOT SET'));
+        logger('Generated buttonHoverBg: ' . $buttonHoverBg);
+        logger('buttonHover color: ' . ($buttonHover['color'] ?? 'NOT SET'));
+        logger('buttonHover border: ' . ($buttonHover['borderWidth'] ?? 'NOT SET') . 'px ' . ($buttonHover['borderStyle'] ?? 'solid') . ' ' . ($buttonHover['borderColor'] ?? 'NOT SET'));
+        logger('buttonHover glow: ' . ($buttonHover['glowBlur'] ?? 'NOT SET') . 'px ' . ($buttonHover['glowColor'] ?? 'NOT SET'));
 
         $containerBackground = $this->buildBackgroundStyle($container);
         $logoBackground = $this->buildBackgroundStyle($logo);
@@ -1888,7 +2043,7 @@ Author: BPS Kota Tanjungpinang
             left: 0;
             right: 0;
             height: {$container['topGradientHeight']}px;
-            {$topGradient}
+            background: {$topGradient}
         }
 
         @keyframes fadeInUp {
@@ -1951,14 +2106,35 @@ Author: BPS Kota Tanjungpinang
             font-weight: 600;
             font-size: 15px;
             border: {$button['borderWidth']}px {$button['borderStyle']} {$button['borderColor']};
+            background: {$button['backgroundColor']};
+            color: {$button['color']};
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
         }
 
-        .link-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 0 {$buttonHover['glowBlur']}px {$buttonHover['glowColor']};
+        .link-button:hover:not(.custom-styled) {
+            /* DEBUG: Hover Background - {$buttonHoverBg} */
+            /* DEBUG: Hover Text - {$buttonHover['color']} */
+            /* DEBUG: Hover Border - {$buttonHover['borderWidth']}px {$buttonHover['borderStyle']} {$buttonHover['borderColor']} */
+            transform: translateY(-2px) !important;
+            background: {$buttonHoverBg} !important;
+            color: {$buttonHover['color']} !important;
+            border: {$buttonHover['borderWidth']}px {$buttonHover['borderStyle']} {$buttonHover['borderColor']} !important;
+            box-shadow: 0 0 {$buttonHover['glowBlur']}px {$buttonHover['glowColor']} !important;
+        }
+
+        /* Custom styled links - PARSIAL hover: transform + glow effects ONLY */
+        .link-button.custom-styled:hover {
+            transform: translateY(-2px) !important;
+            /* Keep original custom background and text colors */
+            border: {$buttonHover['borderWidth']}px {$buttonHover['borderStyle']} {$buttonHover['borderColor']} !important;
+            box-shadow: 0 0 {$buttonHover['glowBlur']}px {$buttonHover['glowColor']} !important;
+        }
+
+        /* Custom styled links - use data attributes for individual styling */
+        .link-custom {
+            /* Custom background and text colors will be set via JavaScript from data attributes */
         }
 
         .footer {

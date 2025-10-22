@@ -481,7 +481,9 @@
                                                     Gradien</label>
                                                 <div class="p-3 border border-gray-300 rounded-lg bg-gray-50">
                                                     <div class="flex items-center gap-3 mb-3">
-                                                        <input type="color" id="gradientStartColor" value="#002366"
+                                                        <input type="color" id="gradientStartColor"
+                                                            wire:model.live.debounce.300ms="styles.background.gradientStart"
+                                                            value="#002366"
                                                             class="border-2 border-gray-300 rounded-lg cursor-pointer w-14 h-14">
                                                         <div class="flex-1">
                                                             <label class="block mb-1 text-xs text-gray-600">
@@ -489,6 +491,7 @@
                                                                     id="gradientStartOpacity">100%</span>
                                                             </label>
                                                             <input type="range" id="gradientStartRange"
+                                                                wire:model.live.debounce.300ms="styles.background.gradientStartOpacity"
                                                                 min="0" max="100" value="100"
                                                                 class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider">
                                                         </div>
@@ -507,13 +510,16 @@
                                                     Gradien</label>
                                                 <div class="p-3 border border-gray-300 rounded-lg bg-gray-50">
                                                     <div class="flex items-center gap-3 mb-3">
-                                                        <input type="color" id="gradientEndColor" value="#1d4e5f"
+                                                        <input type="color" id="gradientEndColor"
+                                                            wire:model.live.debounce.300ms="styles.background.gradientEnd"
+                                                            value="#1d4e5f"
                                                             class="border-2 border-gray-300 rounded-lg cursor-pointer w-14 h-14">
                                                         <div class="flex-1">
                                                             <label class="block mb-1 text-xs text-gray-600">
                                                                 Transparansi: <span id="gradientEndOpacity">100%</span>
                                                             </label>
                                                             <input type="range" id="gradientEndRange"
+                                                                wire:model.live.debounce.300ms="styles.background.gradientEndOpacity"
                                                                 min="0" max="100" value="100"
                                                                 class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider">
                                                         </div>
@@ -572,6 +578,7 @@
                                                     <div class="p-3 border border-gray-300 rounded-lg bg-gray-50">
                                                         <div class="flex items-center gap-3 mb-3">
                                                             <input type="color" id="containerBgColor"
+                                                                wire:model.live.debounce.300ms="styles.container.backgroundColor"
                                                                 value="#ffffff"
                                                                 class="border-2 border-gray-300 rounded-lg cursor-pointer w-14 h-14">
                                                             <div class="flex-1">
@@ -580,6 +587,7 @@
                                                                         id="containerBgOpacity">95%</span>
                                                                 </label>
                                                                 <input type="range" id="containerBgRange"
+                                                                    wire:model.live.debounce.300ms="styles.container.backgroundOpacity"
                                                                     min="0" max="100" value="95"
                                                                     class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider">
                                                             </div>
@@ -619,6 +627,7 @@
                                                         <div class="p-3 border border-gray-300 rounded-lg bg-gray-50">
                                                             <div class="flex items-center gap-2 mb-2">
                                                                 <input type="color" id="containerGradStartColor"
+                                                                    wire:model.live.debounce.300ms="styles.container.backgroundGradientStart"
                                                                     value="#ffffff"
                                                                     class="w-12 h-12 border-2 border-gray-300 rounded-lg cursor-pointer">
                                                                 <div class="flex-1">
@@ -627,6 +636,7 @@
                                                                             id="containerGradStartOpacity">95%</span>
                                                                     </label>
                                                                     <input type="range" id="containerGradStartRange"
+                                                                        wire:model.live.debounce.300ms="styles.container.backgroundGradientStartOpacity"
                                                                         min="0" max="100" value="95"
                                                                         class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider">
                                                                 </div>
@@ -647,6 +657,7 @@
                                                         <div class="p-3 border border-gray-300 rounded-lg bg-gray-50">
                                                             <div class="flex items-center gap-2 mb-2">
                                                                 <input type="color" id="containerGradEndColor"
+                                                                    wire:model.live.debounce.300ms="styles.container.backgroundGradientEnd"
                                                                     value="#f8fafc"
                                                                     class="w-12 h-12 border-2 border-gray-300 rounded-lg cursor-pointer">
                                                                 <div class="flex-1">
@@ -655,6 +666,7 @@
                                                                             id="containerGradEndOpacity">95%</span>
                                                                     </label>
                                                                     <input type="range" id="containerGradEndRange"
+                                                                        wire:model.live.debounce.300ms="styles.container.backgroundGradientEndOpacity"
                                                                         min="0" max="100" value="95"
                                                                         class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider">
                                                                 </div>
@@ -704,10 +716,12 @@
                                                     <div class="p-3 border border-gray-300 rounded-lg bg-gray-50">
                                                         <div class="flex items-center gap-2 mb-2">
                                                             <input type="color" id="topGradientStartColor"
+                                                                wire:model.live.debounce.300ms="styles.container.topGradientStart"
                                                                 value="#ffd700"
                                                                 class="w-12 h-12 border-2 border-gray-300 rounded-lg cursor-pointer">
                                                             <div class="flex-1">
                                                                 <input type="range" id="topGradientStartRange"
+                                                                    wire:model.live.debounce.300ms="styles.container.topGradientStartOpacity"
                                                                     min="0" max="100" value="100"
                                                                     class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider">
                                                             </div>
@@ -726,10 +740,12 @@
                                                     <div class="p-3 border border-gray-300 rounded-lg bg-gray-50">
                                                         <div class="flex items-center gap-2 mb-2">
                                                             <input type="color" id="topGradientEndColor"
+                                                                wire:model.live.debounce.300ms="styles.container.topGradientEnd"
                                                                 value="#002366"
                                                                 class="w-12 h-12 border-2 border-gray-300 rounded-lg cursor-pointer">
                                                             <div class="flex-1">
                                                                 <input type="range" id="topGradientEndRange"
+                                                                    wire:model.live.debounce.300ms="styles.container.topGradientEndOpacity"
                                                                     min="0" max="100" value="100"
                                                                     class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider">
                                                             </div>
@@ -768,10 +784,13 @@
                                                         class="block mb-2 text-sm font-medium text-gray-600">Warna</label>
                                                     <div class="p-3 border border-gray-300 rounded-lg bg-gray-50">
                                                         <div class="flex items-center gap-2 mb-2">
-                                                            <input type="color" id="titleColor" value="#002366"
+                                                            <input type="color" id="titleColor"
+                                                                wire:model.live.debounce.300ms="styles.title.color"
+                                                                value="#002366"
                                                                 class="w-12 h-12 border-2 border-gray-300 rounded-lg cursor-pointer">
                                                             <div class="flex-1">
                                                                 <input type="range" id="titleOpacityRange"
+                                                                    wire:model.live.debounce.300ms="styles.title.colorOpacity"
                                                                     min="0" max="100" value="100"
                                                                     class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider">
                                                             </div>
@@ -818,10 +837,13 @@
                                                         class="block mb-2 text-sm font-medium text-gray-600">Warna</label>
                                                     <div class="p-3 border border-gray-300 rounded-lg bg-gray-50">
                                                         <div class="flex items-center gap-2 mb-2">
-                                                            <input type="color" id="descColor" value="#666666"
+                                                            <input type="color" id="descColor"
+                                                                wire:model.live.debounce.300ms="styles.description.color"
+                                                                value="#666666"
                                                                 class="w-12 h-12 border-2 border-gray-300 rounded-lg cursor-pointer">
                                                             <div class="flex-1">
                                                                 <input type="range" id="descOpacityRange"
+                                                                    wire:model.live.debounce.300ms="styles.description.colorOpacity"
                                                                     min="0" max="100" value="100"
                                                                     class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider">
                                                             </div>
@@ -861,10 +883,13 @@
                                                         Latar Belakang</label>
                                                     <div class="p-3 border border-gray-300 rounded-lg bg-gray-50">
                                                         <div class="flex items-center gap-2 mb-2">
-                                                            <input type="color" id="buttonBgColor" value="#ffffff"
+                                                            <input type="color" id="buttonBgColor"
+                                                                wire:model.live.debounce.300ms="styles.button.backgroundColor"
+                                                                value="#ffffff"
                                                                 class="w-12 h-12 border-2 border-gray-300 rounded-lg cursor-pointer">
                                                             <div class="flex-1">
                                                                 <input type="range" id="buttonBgRange"
+                                                                    wire:model.live.debounce.300ms="styles.button.backgroundOpacity"
                                                                     min="0" max="100" value="100"
                                                                     class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider">
                                                             </div>
@@ -883,10 +908,12 @@
                                                     <div class="p-3 border border-gray-300 rounded-lg bg-gray-50">
                                                         <div class="flex items-center gap-2 mb-2">
                                                             <input type="color" id="buttonTextColor"
+                                                                wire:model.live.debounce.300ms="styles.button.color"
                                                                 value="#002366"
                                                                 class="w-12 h-12 border-2 border-gray-300 rounded-lg cursor-pointer">
                                                             <div class="flex-1">
                                                                 <input type="range" id="buttonTextRange"
+                                                                    wire:model.live.debounce.300ms="styles.button.colorOpacity"
                                                                     min="0" max="100" value="100"
                                                                     class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider">
                                                             </div>
@@ -908,10 +935,12 @@
                                                     <div class="p-2 border border-gray-300 rounded-lg bg-gray-50">
                                                         <div class="flex items-center gap-1 mb-1">
                                                             <input type="color" id="buttonBorderColor"
+                                                                wire:model.live.debounce.300ms="styles.button.borderColor"
                                                                 value="#eaeaea"
                                                                 class="w-8 h-8 border border-gray-300 rounded cursor-pointer">
                                                             <div class="flex-1">
                                                                 <input type="range" id="buttonBorderRange"
+                                                                    wire:model.live.debounce.300ms="styles.button.borderOpacity"
                                                                     min="0" max="100" value="100"
                                                                     class="w-full h-1 bg-gray-200 rounded appearance-none cursor-pointer slider">
                                                             </div>
@@ -965,10 +994,15 @@
                                                     <div class="p-3 border border-gray-300 rounded-lg bg-gray-50">
                                                         <div class="flex items-center gap-2 mb-2">
                                                             <input type="color" id="hoverBgStartColor"
+                                                                wire:model.live.debounce.300ms="styles.buttonHover.backgroundStart"
                                                                 value="#ffd700"
                                                                 class="w-12 h-12 border-2 border-gray-300 rounded-lg cursor-pointer">
                                                             <div class="flex-1">
+                                                                <label class="block mb-1 text-xs text-gray-600">
+                                                                    Transparansi: <span id="hoverBgStartOpacity">100%</span>
+                                                                </label>
                                                                 <input type="range" id="hoverBgStartRange"
+                                                                    wire:model.live.debounce.300ms="styles.buttonHover.backgroundStartOpacity"
                                                                     min="0" max="100" value="100"
                                                                     class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider">
                                                             </div>
@@ -987,10 +1021,15 @@
                                                     <div class="p-3 border border-gray-300 rounded-lg bg-gray-50">
                                                         <div class="flex items-center gap-2 mb-2">
                                                             <input type="color" id="hoverBgEndColor"
+                                                                wire:model.live.debounce.300ms="styles.buttonHover.backgroundEnd"
                                                                 value="#ffffff"
                                                                 class="w-12 h-12 border-2 border-gray-300 rounded-lg cursor-pointer">
                                                             <div class="flex-1">
+                                                                <label class="block mb-1 text-xs text-gray-600">
+                                                                    Transparansi: <span id="hoverBgEndOpacity">100%</span>
+                                                                </label>
                                                                 <input type="range" id="hoverBgEndRange"
+                                                                    wire:model.live.debounce.300ms="styles.buttonHover.backgroundEndOpacity"
                                                                     min="0" max="100" value="100"
                                                                     class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider">
                                                             </div>
@@ -1011,10 +1050,13 @@
                                                         Teks Hover</label>
                                                     <div class="p-3 border border-gray-300 rounded-lg bg-gray-50">
                                                         <div class="flex items-center gap-2 mb-2">
-                                                            <input type="color" id="hoverTextColor" value="#002366"
+                                                            <input type="color" id="hoverTextColor"
+                                                                wire:model.live.debounce.300ms="styles.buttonHover.color"
+                                                                value="#002366"
                                                                 class="w-12 h-12 border-2 border-gray-300 rounded-lg cursor-pointer">
                                                             <div class="flex-1">
                                                                 <input type="range" id="hoverTextRange"
+                                                                    wire:model.live.debounce.300ms="styles.buttonHover.colorOpacity"
                                                                     min="0" max="100" value="100"
                                                                     class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider">
                                                             </div>
@@ -1033,10 +1075,12 @@
                                                     <div class="p-3 border border-gray-300 rounded-lg bg-gray-50">
                                                         <div class="flex items-center gap-2 mb-2">
                                                             <input type="color" id="hoverBorderColor"
+                                                                wire:model.live.debounce.300ms="styles.buttonHover.borderColor"
                                                                 value="#ffd700"
                                                                 class="w-12 h-12 border-2 border-gray-300 rounded-lg cursor-pointer">
                                                             <div class="flex-1">
                                                                 <input type="range" id="hoverBorderRange"
+                                                                    wire:model.live.debounce.300ms="styles.buttonHover.borderOpacity"
                                                                     min="0" max="100" value="100"
                                                                     class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider">
                                                             </div>
@@ -1082,10 +1126,13 @@
                                                         Cahaya</label>
                                                     <div class="p-3 border border-gray-300 rounded-lg bg-gray-50">
                                                         <div class="flex items-center gap-2 mb-2">
-                                                            <input type="color" id="glowColor" value="#ffd700"
+                                                            <input type="color" id="glowColor"
+                                                                wire:model.live.debounce.300ms="styles.buttonHover.glowColor"
+                                                                value="#ffd700"
                                                                 class="w-12 h-12 border-2 border-gray-300 rounded-lg cursor-pointer">
                                                             <div class="flex-1">
                                                                 <input type="range" id="glowRange" min="0"
+                                                                    wire:model.live.debounce.300ms="styles.buttonHover.glowBlur"
                                                                     max="100" value="30"
                                                                     class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider">
                                                             </div>
@@ -1141,13 +1188,16 @@
                                                         Latar Belakang</label>
                                                     <div class="p-3 border border-gray-300 rounded-lg bg-gray-50">
                                                         <div class="flex items-center gap-2 mb-2">
-                                                            <input type="color" id="logoBgColor" value="#ffffff"
+                                                            <input type="color" id="logoBgColor"
+                                                                wire:model.live.debounce.300ms="styles.logo.backgroundColor"
+                                                                value="#ffffff"
                                                                 class="w-12 h-12 border-2 border-gray-300 rounded-lg cursor-pointer">
                                                             <div class="flex-1">
                                                                 <label class="block mb-1 text-xs text-gray-600">
                                                                     Transparansi: <span id="logoBgOpacity">100%</span>
                                                                 </label>
                                                                 <input type="range" id="logoBgRange" min="0"
+                                                                    wire:model.live.debounce.300ms="styles.logo.backgroundOpacity"
                                                                     max="100" value="100"
                                                                     class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider">
                                                             </div>
@@ -1165,7 +1215,9 @@
                                                         Lingkaran</label>
                                                     <div class="p-3 border border-gray-300 rounded-lg bg-gray-50">
                                                         <div class="flex items-center gap-2 mb-2">
-                                                            <input type="color" id="logoRingColor" value="#ffd700"
+                                                            <input type="color" id="logoRingColor"
+                                                                wire:model.live.debounce.300ms="styles.logo.borderColor"
+                                                                value="#ffd700"
                                                                 class="w-12 h-12 border-2 border-gray-300 rounded-lg cursor-pointer">
                                                             <div class="flex-1">
                                                                 <label class="block mb-1 text-xs text-gray-600">
@@ -1173,6 +1225,7 @@
                                                                         id="logoRingOpacity">100%</span>
                                                                 </label>
                                                                 <input type="range" id="logoRingRange"
+                                                                    wire:model.live.debounce.300ms="styles.logo.borderOpacity"
                                                                     min="0" max="100" value="100"
                                                                     class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider">
                                                             </div>
@@ -1200,6 +1253,7 @@
                                                     <div class="p-3 border border-gray-300 rounded-lg bg-gray-50">
                                                         <div class="flex items-center gap-2 mb-2">
                                                             <input type="color" id="logoGradStartColor"
+                                                                wire:model.live.debounce.300ms="styles.logo.backgroundGradientStart"
                                                                 value="#ffffff"
                                                                 class="w-12 h-12 border-2 border-gray-300 rounded-lg cursor-pointer">
                                                             <div class="flex-1">
@@ -1208,6 +1262,7 @@
                                                                         id="logoGradStartOpacity">100%</span>
                                                                 </label>
                                                                 <input type="range" id="logoGradStartRange"
+                                                                    wire:model.live.debounce.300ms="styles.logo.backgroundGradientStartOpacity"
                                                                     min="0" max="100" value="100"
                                                                     class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider">
                                                             </div>
@@ -1227,6 +1282,7 @@
                                                     <div class="p-3 border border-gray-300 rounded-lg bg-gray-50">
                                                         <div class="flex items-center gap-2 mb-2">
                                                             <input type="color" id="logoGradEndColor"
+                                                                wire:model.live.debounce.300ms="styles.logo.backgroundGradientEnd"
                                                                 value="#f8fafc"
                                                                 class="w-12 h-12 border-2 border-gray-300 rounded-lg cursor-pointer">
                                                             <div class="flex-1">
@@ -1235,6 +1291,7 @@
                                                                         id="logoGradEndOpacity">100%</span>
                                                                 </label>
                                                                 <input type="range" id="logoGradEndRange"
+                                                                    wire:model.live.debounce.300ms="styles.logo.backgroundGradientEndOpacity"
                                                                     min="0" max="100" value="100"
                                                                     class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider">
                                                             </div>
@@ -1278,6 +1335,7 @@
                                                     <div class="p-3 border border-gray-300 rounded-lg bg-gray-50">
                                                         <div class="flex items-center gap-2 mb-2">
                                                             <input type="color" id="logoRingColorGrad"
+                                                                wire:model.live.debounce.300ms="styles.logo.borderColor"
                                                                 value="#ffd700"
                                                                 class="w-12 h-12 border-2 border-gray-300 rounded-lg cursor-pointer">
                                                             <div class="flex-1">
@@ -1286,6 +1344,7 @@
                                                                         id="logoRingGradOpacity">100%</span>
                                                                 </label>
                                                                 <input type="range" id="logoRingRangeGrad"
+                                                                    wire:model.live.debounce.300ms="styles.logo.borderOpacity"
                                                                     min="0" max="100" value="100"
                                                                     class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider">
                                                             </div>
@@ -1355,10 +1414,13 @@
                                                     Teks</label>
                                                 <div class="p-3 border border-gray-300 rounded-lg bg-gray-50">
                                                     <div class="flex items-center gap-2 mb-2">
-                                                        <input type="color" id="footerTextColor" value="#999999"
+                                                        <input type="color" id="footerTextColor"
+                                                            wire:model.live.debounce.300ms="styles.footer.textColor"
+                                                            value="#999999"
                                                             class="w-12 h-12 border-2 border-gray-300 rounded-lg cursor-pointer">
                                                         <div class="flex-1">
                                                             <input type="range" id="footerTextRange" min="0"
+                                                                wire:model.live.debounce.300ms="styles.footer.textOpacity"
                                                                 max="100" value="100"
                                                                 class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider">
                                                         </div>
@@ -1392,10 +1454,12 @@
                                                     <div class="p-3 border border-gray-300 rounded-lg bg-gray-50">
                                                         <div class="flex items-center gap-2 mb-2">
                                                             <input type="color" id="footerBorderColor"
+                                                                wire:model.live.debounce.300ms="styles.footer.borderColor"
                                                                 value="#eeeeee"
                                                                 class="w-12 h-12 border-2 border-gray-300 rounded-lg cursor-pointer">
                                                             <div class="flex-1">
                                                                 <input type="range" id="footerBorderRange"
+                                                                    wire:model.live.debounce.300ms="styles.footer.borderOpacity"
                                                                     min="0" max="100" value="100"
                                                                     class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider">
                                                             </div>
@@ -1963,13 +2027,50 @@
             setupFileUploadHandler();
             setupSlugFormatter();
 
+            // Special handling for edit mode - update ALL color pickers with database data
+            setTimeout(() => {
+                updateAllColorPickersFromStyles();
+                updateAllRangeSlidersFromLivewire();
+                updateQRColorPickersFromLivewire();
+                console.log('🔄 Updated ALL color pickers with database data for edit mode');
+            }, 500);
+
             console.log('✅ All components initialized');
 
             // ===== LIVEWIRE HOOKS (SATU TEMPAT UNTUK SEMUA) =====
 
+            // Hook untuk initial render (page load pertama) - tunggu Livewire load data dulu
+            Livewire.hook('component.initialized', (component) => {
+                if (component.fingerprint.name !== 'edit-tautan') return;
+
+                console.log('🎯 EditTautan component initialized - waiting for Livewire data load...');
+
+                // Tunggu lebih lama untuk memastikan text inputs terisi dari database
+                setTimeout(() => {
+                    updateAllColorPickersFromStyles();
+                    updateAllRangeSlidersFromLivewire();
+                    updateQRColorPickersFromLivewire();
+                    console.log('✅ Form fields synced after database data loaded');
+                }, 500); // Increased delay for database loading
+            });
+
+            // Hook rendered tidak didukung di Livewire versi ini - comment out
+            // Livewire.hook('rendered', (component) => {
+            //     if (component.fingerprint.name !== 'edit-tautan') return;
+            //
+            //     console.log('🎯 EditTautan component rendered - ensuring form fields are synced...');
+            //
+            //     setTimeout(() => {
+            //         updateAllColorPickersFromStyles();
+            //         updateAllRangeSlidersFromLivewire();
+            //         updateQRColorPickersFromLivewire();
+            //         console.log('✅ Form fields re-synced after render');
+            //     }, 200);
+            // });
+
             // Hook utama untuk update setelah Livewire response
             Livewire.hook('message.processed', (message, component) => {
-                if (component.fingerprint.name !== 'buat-tautan') return;
+                if (component.fingerprint.name !== 'edit-tautan') return;
 
                 try {
                     // Update preview iframe
@@ -1978,12 +2079,19 @@
                     // Update radio button state berdasarkan Livewire state terbaru
                     updateRadioButtonsFromLivewire(component);
 
-                    // Update range sliders dengan delay untuk memastikan DOM ready
+                    // Update color pickers from loaded styles (IMPORTANT for edit mode)
                     setTimeout(() => {
+                        updateAllColorPickersFromStyles();
+                        updateQRColorPickersFromLivewire(); // Special handling for QR pickers
                         updateAllRangeSlidersFromLivewire();
                         // Refresh QR colors from Livewire state
                         refreshQRColorsFromLivewire();
-                    }, 100);
+                        // Update hover effects in preview
+                        const iframe = document.getElementById('previewFrame');
+                        if (iframe) {
+                            addHoverEffectsToPreview(iframe);
+                        }
+                    }, 300);
 
                     // Reset processing flag
                     isProcessingUpload = false;
@@ -2195,7 +2303,75 @@
                 const newSrcdoc = iframe.getAttribute('srcdoc');
                 if (newSrcdoc && iframe.srcdoc !== newSrcdoc) {
                     iframe.srcdoc = newSrcdoc;
+
+                    // Tambahkan hover effects setelah iframe load
+                    setTimeout(() => {
+                        addHoverEffectsToPreview(iframe);
+                    }, 100);
                 }
+            }
+        }
+
+        function addHoverEffectsToPreview(iframe) {
+            try {
+                const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                if (!iframeDoc) return;
+
+                // Get current hover settings from Livewire component
+                let component = Livewire.find('edit-tautan');
+                if (!component) {
+                    // Try alternative method to find component
+                    const components = Livewire.all();
+                    component = components.find(comp => comp.name === 'edit-tautan');
+                }
+                if (!component) return;
+
+                const hoverSettings = {
+                    backgroundStart: component.get('styles.buttonHover.backgroundStart') || '#FFD700',
+                    backgroundEnd: component.get('styles.buttonHover.backgroundEnd') || '#FFFFFF',
+                    textColor: component.get('styles.buttonHover.color') || '#002366',
+                    borderColor: component.get('styles.buttonHover.borderColor') || '#FFD700',
+                    borderWidth: component.get('styles.buttonHover.borderWidth') || 2,
+                    borderStyle: component.get('styles.buttonHover.borderStyle') || 'solid',
+                    glowColor: component.get('styles.buttonHover.glowColor') || '#FFD700',
+                    glowBlur: component.get('styles.buttonHover.glowBlur') || 30
+                };
+
+                console.log('🎨 Preview Hover Settings:', hoverSettings);
+
+                // Add hover effects to all link buttons in iframe
+                const linkButtons = iframeDoc.querySelectorAll('.link-button');
+                linkButtons.forEach(button => {
+                    // Store original styles
+                    const originalBackground = button.style.background;
+                    const originalColor = button.style.color;
+                    const originalBorder = button.style.border;
+                    const originalBoxShadow = button.style.boxShadow;
+
+                    // 🎯 PERBAIKAN: DISABLE JAVASCRIPT HOVER - CSS SUDAH MENGHANDLE HOVER
+                    // 🎯 DISABLED: CSS sudah menghandle hover
+                    // button.addEventListener('mouseenter', function() {
+                    //     this.style.transform = 'translateY(-2px)';
+                    //     this.style.background = `linear-gradient(135deg, ${hoverSettings.backgroundStart}, ${hoverSettings.backgroundEnd})`;
+                    //     this.style.color = hoverSettings.textColor;
+                    //     this.style.border = `${hoverSettings.borderWidth}px ${hoverSettings.borderStyle} ${hoverSettings.borderColor}`;
+                    //     this.style.boxShadow = `0 0 ${hoverSettings.glowBlur}px ${hoverSettings.glowColor}`;
+                    // });
+
+                    // 🎯 PERBAIKAN FINAL: HAPUS mouseleave listener agar CSS hover bisa bekerja!
+                    // CSS sudah menghandle hover effects, jadi JavaScript tidak perlu reset styles
+                    // button.addEventListener('mouseleave', function() {
+                    //     this.style.transform = '';
+                    //     this.style.background = originalBackground;
+                    //     this.style.color = originalColor;
+                    //     this.style.border = originalBorder;
+                    //     this.style.boxShadow = originalBoxShadow;
+                    // });
+                });
+
+                console.log(`🎯 CSS HOVER DISABLED: ${linkButtons.length} buttons using pure CSS hover effects`);
+            } catch (error) {
+                console.warn('⚠️ Error adding hover effects to preview:', error);
             }
         }
 
@@ -2536,116 +2712,259 @@
             console.log('🎨 Initialized', initCount, 'color pickers (✅ QR: 3 color controls added!)');
         }
 
+        function updateQRColorPickersFromLivewire() {
+            // Special function to update QR color pickers from Livewire model values
+            try {
+                // Get QR color picker values from Livewire component
+                let component = Livewire.find('edit-tautan');
+                if (!component) {
+                    // Try alternative method to find component
+                    const components = Livewire.all();
+                    component = components.find(comp => comp.name === 'edit-tautan');
+                }
+                if (!component) {
+                    console.warn('Edit tautan component not found');
+                    return;
+                }
+
+                // Get QR color values from Livewire state
+                const qrBgColor = component.get('qrBackgroundColorPicker');
+                const qrBorderColor = component.get('qrBorderColorPicker');
+                const qrDarkColor = component.get('qrDarkColorPicker');
+
+                console.log('🎨 Updating QR Color Pickers from Livewire:');
+                console.log('   BG Color:', qrBgColor);
+                console.log('   Border Color:', qrBorderColor);
+                console.log('   Dark Color:', qrDarkColor);
+
+                // Update color picker inputs
+                const bgPicker = document.getElementById('qrBackgroundColorPicker');
+                const borderPicker = document.getElementById('qrBorderColorPicker');
+                const darkPicker = document.getElementById('qrDarkColorPicker');
+
+                if (bgPicker && qrBgColor) {
+                    bgPicker.value = qrBgColor;
+                    console.log('✅ Updated QR Background Color picker');
+                }
+                if (borderPicker && qrBorderColor) {
+                    borderPicker.value = qrBorderColor;
+                    console.log('✅ Updated QR Border Color picker');
+                }
+                if (darkPicker && qrDarkColor) {
+                    darkPicker.value = qrDarkColor;
+                    console.log('✅ Updated QR Dark Color picker');
+                }
+            } catch (error) {
+                console.warn('Error updating QR color pickers from Livewire:', error);
+            }
+        }
+
         function updateAllColorPickersFromStyles() {
+            console.log('🔄 updateAllColorPickersFromStyles() called');
+            console.log('📊 Checking if Livewire component data is available...');
+
+            // Check if Livewire component is available and has data
+            if (typeof @this === 'undefined') {
+                console.warn('⚠️ Livewire component not available, skipping color sync');
+                return;
+            }
+
+            // Get current Livewire styles data for debugging
+            let livewireData = {};
+            try {
+                livewireData = @this.get('styles');
+                console.log('🎨 Livewire styles data:', livewireData);
+            } catch (error) {
+                console.warn('⚠️ Could not access Livewire styles data:', error);
+            }
+
             const colorPickerMappings = [
                 // Background
-                ['gradientStartColor', 'gradientStartRange', 'gradientStartOutput'],
-                ['gradientEndColor', 'gradientEndRange', 'gradientEndOutput'],
-                ['containerBgColor', 'containerBgRange', 'containerBgOutput'],
-                ['containerGradStartColor', 'containerGradStartRange', 'containerGradStartOutput'],
-                ['containerGradEndColor', 'containerGradEndRange', 'containerGradEndOutput'],
-                ['topGradientStartColor', 'topGradientStartRange', 'topGradientStartOutput'],
-                ['topGradientEndColor', 'topGradientEndRange', 'topGradientEndOutput'],
+                ['gradientStartColor', 'gradientStartRange', 'gradientStartOutput', 'styles.background.gradientStart'],
+                ['gradientEndColor', 'gradientEndRange', 'gradientEndOutput', 'styles.background.gradientEnd'],
+                ['containerBgColor', 'containerBgRange', 'containerBgOutput', 'styles.container.backgroundColor'],
+                ['containerGradStartColor', 'containerGradStartRange', 'containerGradStartOutput', 'styles.container.backgroundGradientStart'],
+                ['containerGradEndColor', 'containerGradEndRange', 'containerGradEndOutput', 'styles.container.backgroundGradientEnd'],
+                ['topGradientStartColor', 'topGradientStartRange', 'topGradientStartOutput', 'styles.container.topGradientStart'],
+                ['topGradientEndColor', 'topGradientEndRange', 'topGradientEndOutput', 'styles.container.topGradientEnd'],
 
                 // Typography
-                ['titleColor', 'titleOpacityRange', 'titleColorOutput'],
-                ['descColor', 'descOpacityRange', 'descColorOutput'],
+                ['titleColor', 'titleOpacityRange', 'titleColorOutput', 'styles.title.color'],
+                ['descColor', 'descOpacityRange', 'descColorOutput', 'styles.description.color'],
 
                 // Buttons
-                ['buttonBgColor', 'buttonBgRange', 'buttonBgOutput'],
-                ['buttonTextColor', 'buttonTextRange', 'buttonTextOutput'],
-                ['buttonBorderColor', 'buttonBorderRange', 'buttonBorderOutput'],
-                ['hoverBgStartColor', 'hoverBgStartRange', 'hoverBgStartOutput'],
-                ['hoverBgEndColor', 'hoverBgEndRange', 'hoverBgEndOutput'],
-                ['hoverTextColor', 'hoverTextRange', 'hoverTextOutput'],
-                ['hoverBorderColor', 'hoverBorderRange', 'hoverBorderOutput'],
-                ['glowColor', 'glowRange', 'glowOutput'],
+                ['buttonBgColor', 'buttonBgRange', 'buttonBgOutput', 'styles.button.backgroundColor'],
+                ['buttonTextColor', 'buttonTextRange', 'buttonTextOutput', 'styles.button.color'],
+                ['buttonBorderColor', 'buttonBorderRange', 'buttonBorderOutput', 'styles.button.borderColor'],
+                ['hoverBgStartColor', 'hoverBgStartRange', 'hoverBgStartOutput', 'styles.buttonHover.backgroundStart'],
+                ['hoverBgEndColor', 'hoverBgEndRange', 'hoverBgEndOutput', 'styles.buttonHover.backgroundEnd'],
+                ['hoverTextColor', 'hoverTextRange', 'hoverTextOutput', 'styles.buttonHover.color'],
+                ['hoverBorderColor', 'hoverBorderRange', 'hoverBorderOutput', 'styles.buttonHover.borderColor'],
+                ['glowColor', 'glowRange', 'glowOutput', 'styles.buttonHover.glowColor'],
 
                 // Logo
-                ['logoBgColor', 'logoBgRange', 'logoBgOutput'],
-                ['logoGradStartColor', 'logoGradStartRange', 'logoGradStartOutput'],
-                ['logoGradEndColor', 'logoGradEndRange', 'logoGradEndOutput'],
-                ['logoRingColor', 'logoRingRange', 'logoRingOutput'],
-                ['logoRingColorGrad', 'logoRingRangeGrad', 'logoRingOutputGrad'],
+                ['logoBgColor', 'logoBgRange', 'logoBgOutput', 'styles.logo.backgroundColor'],
+                ['logoGradStartColor', 'logoGradStartRange', 'logoGradStartOutput', 'styles.logo.backgroundGradientStart'],
+                ['logoGradEndColor', 'logoGradEndRange', 'logoGradEndOutput', 'styles.logo.backgroundGradientEnd'],
+                ['logoRingColor', 'logoRingRange', 'logoRingOutput', 'styles.logo.borderColor'],
+                ['logoRingColorGrad', 'logoRingRangeGrad', 'logoRingOutputGrad', 'styles.logo.borderColor'],
 
                 // Footer
-                ['footerTextColor', 'footerTextRange', 'footerTextOutput'],
-                ['footerBorderColor', 'footerBorderRange', 'footerBorderOutput'],
+                ['footerTextColor', 'footerTextRange', 'footerTextOutput', 'styles.footer.textColor'],
+                ['footerBorderColor', 'footerBorderRange', 'footerBorderOutput', 'styles.footer.borderColor'],
 
-                // QR Code colors now use Livewire model binding - no JavaScript needed
+                // QR Code colors - IMPORTANT: Update these in edit mode
+                ['qrBackgroundColorPicker', null, 'qrBackgroundOutput', 'qrBackgroundColorPicker'],
+                ['qrBorderColorPicker', null, 'qrBorderOutput', 'qrBorderColorPicker'],
+                ['qrDarkColorPicker', null, 'qrDarkOutput', 'qrDarkColorPicker']
             ];
 
             let syncedCount = 0;
+            let failedCount = 0;
 
-            colorPickerMappings.forEach(([colorId, rangeId, outputId]) => {
+            colorPickerMappings.forEach(([colorId, rangeId, outputId, livewireProperty]) => {
                 const colorInput = document.getElementById(colorId);
                 const rangeInput = rangeId ? document.getElementById(rangeId) : null;
                 const textInput = document.getElementById(outputId);
 
                 // Handle color controls with and without range slider
-                if (colorInput && textInput && textInput.value) {
-                    let hexColor = null;
-                    let opacityPercent = 100; // Default 100% untuk HEX
+                if (colorInput && textInput) {
+                    let sourceValue = null;
+                    let source = '';
 
-                    // Cek apakah format RGBA
-                    const rgba = parseRGBAValue(textInput.value);
-                    if (rgba) {
-                        // Format RGBA - konversi ke HEX
-                        hexColor = rgbToHex(rgba.r, rgba.g, rgba.b);
-                        opacityPercent = Math.round(rgba.a * 100);
-                    } else {
-                        // Format HEX - gunakan langsung
-                        hexColor = textInput.value.startsWith('#') ? textInput.value : '#' + textInput.value;
+                    // Use text input value directly (BuatTautan approach - simpler and more reliable)
+                    if (textInput.value) {
+                        sourceValue = textInput.value;
+                        source = 'Text Input';
+                        console.log(`🎯 ${colorId}: Got ${sourceValue} from text input (${outputId})`);
+                    } else if (livewireProperty && typeof @this !== 'undefined') {
+                        // Fallback: Ambil langsung dari Livewire jika text input masih kosong
+                        try {
+                            const propertyPath = livewireProperty.split('.');
+                            let value = @this.get(livewireProperty);
+                            if (value) {
+                                sourceValue = value;
+                                source = 'Livewire Fallback';
+                                console.log(`🎯 ${colorId}: Text input empty, got ${value} from Livewire (${livewireProperty})`);
+                            }
+                        } catch (error) {
+                            console.warn(`⚠️ Could not get ${colorId} from Livewire fallback:`, error);
+                        }
                     }
 
-                    // Update color picker
-                    colorInput.value = hexColor;
+                    // If we have a value, sync it
+                    if (sourceValue) {
+                        console.log(`🎯 Syncing ${colorId} from ${source}:`);
+                        console.log(`   Source value: ${sourceValue}`);
+                        console.log(`   Text input value: ${textInput.value}`);
+                        console.log(`   Element exists: ${colorInput ? 'yes' : 'no'}`);
 
-                    // Update slider opacity (only if range exists)
-                    if (rangeInput) {
-                        rangeInput.value = opacityPercent;
+                        let hexColor = null;
+                        let opacityPercent = 100; // Default 100% untuk HEX
 
-                        // Update opacity display if exists
-                        const possibleOpacitySelectors = [
-                            `#${colorId.replace('Color', 'Opacity')}`,
-                            `#${rangeId.replace('Range', 'Opacity')}`,
-                            `span[id*="${colorId.replace('Color', 'Opacity')}"]`
-                        ];
+                        // Cek apakah format RGBA
+                        const rgba = parseRGBAValue(sourceValue);
+                        if (rgba) {
+                            // Format RGBA - konversi ke HEX untuk color picker
+                            hexColor = rgbToHex(rgba.r, rgba.g, rgba.b);
+                            opacityPercent = Math.round(rgba.a * 100);
+                            console.log(`   🔄 RGBA detected: RGB(${rgba.r}, ${rgba.g}, ${rgba.b}) Opacity: ${rgba.a} → HEX: ${hexColor} (${opacityPercent}%)`);
+                            console.log(`   🎨 Color picker will show base color: ${hexColor}`);
+                        } else {
+                            // Format HEX - gunakan langsung
+                            hexColor = sourceValue.startsWith('#') ? sourceValue : '#' + sourceValue;
+                            console.log(`   🎨 HEX detected: ${hexColor}`);
+                        }
 
-                        possibleOpacitySelectors.forEach(selector => {
-                            const opacityDisplay = document.querySelector(selector);
+                        // Update color picker dengan base color (tanpa opacity)
+                        colorInput.value = hexColor;
+                        console.log(`   ✅ Updated color picker to base color: ${hexColor}`);
+                        console.log(`   🔍 Final check - Color picker value now: ${colorInput.value}`);
+
+                        // IMPORTANT: Color picker hanya show base color, opacity dihandle oleh range slider
+                        if (rgba && opacityPercent < 100) {
+                            console.log(`   ⚠️  NOTE: Color picker shows base color (${hexColor}), opacity ${opacityPercent}% handled by range slider`);
+                        }
+
+                        // Update slider opacity (only if range exists)
+                        if (rangeInput) {
+                            rangeInput.value = opacityPercent;
+                            console.log(`   ✅ Updated range slider to: ${opacityPercent}%`);
+                        }
+
+                        // Update opacity display if exists (BuatTautan approach)
+                        if (rangeId) {
+                            const opacityDisplayId = colorId.replace('Color', 'Opacity');
+                            const opacityDisplay = document.getElementById(opacityDisplayId);
                             if (opacityDisplay) {
                                 opacityDisplay.textContent = opacityPercent + '%';
                             }
-                        });
-                    } else {
+                        }
+
                         // Update HEX display for simple controls
                         const hexDisplayId = colorId.replace('Color', 'Hex');
                         const hexDisplay = document.getElementById(hexDisplayId);
                         if (hexDisplay) {
                             hexDisplay.textContent = hexColor.toUpperCase();
                         }
-                    }
 
-                    syncedCount++;
+                        syncedCount++;
+                    } else {
+                        console.warn(`⚠️ ${colorId}: No value found from Livewire or text input`);
+                        console.log(`   Text input exists: ${textInput ? 'yes' : 'no'}`);
+                        console.log(`   Text input value: "${textInput?.value || 'EMPTY'}"`);
+                        console.log(`   Color input exists: ${colorInput ? 'yes' : 'no'}`);
+                        failedCount++;
+                    }
+                } else {
+                    console.warn(`⚠️ ${colorId}: Missing DOM elements`);
+                    console.log(`   Color input exists: ${colorInput ? 'yes' : 'no'}`);
+                    console.log(`   Text input exists: ${textInput ? 'yes' : 'no'}`);
+                    failedCount++;
                 }
             });
 
-            if (syncedCount > 0) {
-                console.log('✅ Synced', syncedCount, 'color pickers from JSON');
-            }
+            console.log(`✅ Color sync completed: ${syncedCount} synced, ${failedCount} failed`);
         }
+
+        // Manual trigger function for debugging
+        window.debugColorSync = function() {
+            console.log('🔧 Manual color sync triggered');
+            updateAllColorPickersFromStyles();
+            updateAllRangeSlidersFromLivewire();
+            updateQRColorPickersFromLivewire();
+        };
+
+        // Add debug info to window for manual inspection
+        window.debugLivewireData = function() {
+            if (typeof @this !== 'undefined') {
+                console.log('🎨 Livewire styles data:', @this.get('styles'));
+                console.log('🎨 Livewire QR data:', {
+                    qrBackgroundColorPicker: @this.get('qrBackgroundColorPicker'),
+                    qrBorderColorPicker: @this.get('qrBorderColorPicker'),
+                    qrDarkColorPicker: @this.get('qrDarkColorPicker')
+                });
+                return true;
+            } else {
+                console.warn('Livewire component not available');
+                return false;
+            }
+        };
         // Parse string RGBA ke object
         function parseRGBAValue(rgbaStr) {
+            console.log(`🔍 Parsing RGBA: "${rgbaStr}"`);
             const match = rgbaStr.match(/rgba\((\d+),\s*(\d+),\s*(\d+),\s*([\d.]+)\)/);
             if (match) {
-                return {
+                const result = {
                     r: parseInt(match[1]),
                     g: parseInt(match[2]),
                     b: parseInt(match[3]),
                     a: parseFloat(match[4])
                 };
+                console.log(`✅ Parsed RGBA:`, result);
+                return result;
             }
+            console.log(`❌ Failed to parse RGBA from: "${rgbaStr}"`);
             return null;
         }
 
@@ -2655,7 +2974,9 @@
                 const hex = n.toString(16);
                 return hex.length === 1 ? '0' + hex : hex;
             };
-            return '#' + toHex(r) + toHex(g) + toHex(b);
+            const result = '#' + toHex(r) + toHex(g) + toHex(b);
+            console.log(`🎨 RGB(${r}, ${g}, ${b}) → HEX: "${result}"`);
+            return result;
         }
 
         // Setup color picker yang dioptimalkan dengan debouncing dan cleanup yang tepat

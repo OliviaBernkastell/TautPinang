@@ -157,6 +157,7 @@
         rel="stylesheet">
     <link rel="icon" href="{{ asset('img/favicon_public.png') }}" type="image/png">
 
+    
     <!-- Dynamic Styles -->
     <style>
         * {
@@ -506,21 +507,26 @@
             display: block;
             padding: 16px 20px;
 
-            @if (!empty($tautan->styles['button']))
-                background: {{ $tautan->styles['button']['backgroundColor'] ?? '#FFFFFF' }};
-                color: {{ $tautan->styles['button']['color'] ?? '#002366' }};
-                border-radius: {{ $tautan->styles['button']['borderRadius'] ?? 12 }}px;
-                border: {{ $tautan->styles['button']['borderWidth'] ?? 2 }}px {{ $tautan->styles['button']['borderStyle'] ?? 'solid' }} {{ $tautan->styles['button']['borderColor'] ?? '#EAEAEA' }};
-            @else
-                background: #FFFFFF;
-                color: #002366;
-                border-radius: 12px;
-                border: 2px solid #EAEAEA;
-            @endif
+            @php
+                // Get button styles with proper fallbacks
+                $buttonBgColor = $tautan->styles['button']['backgroundColor'] ?? '#FFFFFF';
+                $buttonTextColor = $tautan->styles['button']['color'] ?? '#002366';
+                $buttonBorderRadius = $tautan->styles['button']['borderRadius'] ?? 12;
+                $buttonBorderWidth = $tautan->styles['button']['borderWidth'] ?? 2;
+                $buttonBorderStyle = $tautan->styles['button']['borderStyle'] ?? 'solid';
+                $buttonBorderColor = $tautan->styles['button']['borderColor'] ?? '#EAEAEA';
+                $hoverDuration = $tautan->styles['animations']['hoverDuration'] ?? 0.3;
+            @endphp
+
+            background: {{ $buttonBgColor }};
+            color: {{ $buttonTextColor }};
+            border-radius: {{ $buttonBorderRadius }}px;
+            border: {{ $buttonBorderWidth }}px {{ $buttonBorderStyle }} {{ $buttonBorderColor }};
+
             text-decoration: none;
             font-weight: 600;
             font-size: 15px;
-            transition: all {{ $tautan->styles['animations']['hoverDuration'] ?? 0.3 }}s ease;
+            transition: all {{ $hoverDuration }}s ease;
             position: relative;
             overflow: hidden;
         }
@@ -528,19 +534,22 @@
         .link-button:hover {
             transform: translateY(-2px);
 
-            @if (!empty($tautan->styles['buttonHover']))
-                background: linear-gradient(135deg,
-                        {{ $tautan->styles['buttonHover']['backgroundStart'] ?? '#FFD700' }},
-                        {{ $tautan->styles['buttonHover']['backgroundEnd'] ?? '#FFFFFF' }});
-                color: {{ $tautan->styles['buttonHover']['color'] ?? '#002366' }};
-                border: {{ $tautan->styles['buttonHover']['borderWidth'] ?? 2 }}px {{ $tautan->styles['buttonHover']['borderStyle'] ?? 'solid' }} {{ $tautan->styles['buttonHover']['borderColor'] ?? '#FFD700' }};
-                box-shadow: 0 0 {{ $tautan->styles['buttonHover']['glowBlur'] ?? 30 }}px {{ $tautan->styles['buttonHover']['glowColor'] ?? '#FFD700' }};
-            @else
-                background: linear-gradient(135deg, #FFD700, #FFFFFF);
-                color: #002366;
-                border: 2px solid #FFD700;
-                box-shadow: 0 0 30px #FFD700;
-            @endif
+            @php
+                // Get button hover styles with proper fallbacks
+                $hoverBgStart = $tautan->styles['buttonHover']['backgroundStart'] ?? '#FFD700';
+                $hoverBgEnd = $tautan->styles['buttonHover']['backgroundEnd'] ?? '#FFFFFF';
+                $hoverTextColor = $tautan->styles['buttonHover']['color'] ?? '#002366';
+                $hoverBorderWidth = $tautan->styles['buttonHover']['borderWidth'] ?? 2;
+                $hoverBorderStyle = $tautan->styles['buttonHover']['borderStyle'] ?? 'solid';
+                $hoverBorderColor = $tautan->styles['buttonHover']['borderColor'] ?? '#FFD700';
+                $hoverGlowBlur = $tautan->styles['buttonHover']['glowBlur'] ?? 30;
+                $hoverGlowColor = $tautan->styles['buttonHover']['glowColor'] ?? '#FFD700';
+            @endphp
+
+            background: linear-gradient(135deg, {{ $hoverBgStart }}, {{ $hoverBgEnd }});
+            color: {{ $hoverTextColor }};
+            border: {{ $hoverBorderWidth }}px {{ $hoverBorderStyle }} {{ $hoverBorderColor }};
+            box-shadow: 0 0 {{ $hoverGlowBlur }}px {{ $hoverGlowColor }};
         }
 
         .footer {
@@ -643,21 +652,19 @@
                 @foreach ($tautan->links as $link)
                     @if (!empty($link['judul']) && !empty($link['url']))
                         @php
-                            // Get custom colors for this specific link
-                            $customBgColor = $link['backgroundColor'] ?? null;
-                            $customTextColor = $link['textColor'] ?? null;
+                            // Gunakan logika yang SAMA seperti EditTautan->buildHtml()
+                            $enableCustomStyling = $link['enableCustomStyling'] ?? false;
 
-                            // If custom colors are set, use inline styles to override global styles
-                            $inlineStyle = '';
-                            if ($customBgColor || $customTextColor) {
-                                $inlineStyleParts = [];
-                                if ($customBgColor) {
-                                    $inlineStyleParts[] = "background: {$customBgColor} !important";
-                                }
-                                if ($customTextColor) {
-                                    $inlineStyleParts[] = "color: {$customTextColor} !important";
-                                }
-                                $inlineStyle = implode('; ', $inlineStyleParts);
+                            if ($enableCustomStyling) {
+                                // Custom styling ENABLED - gunakan warna dari link ini
+                                $linkBgColor = $link['backgroundColor'] ?? $tautan->styles['button']['backgroundColor'];
+                                $linkTextColor = $link['textColor'] ?? $tautan->styles['button']['color'];
+                                // Build inline style dengan warna dari link ini
+                                $inlineStyle = "background: {$linkBgColor}; color: {$linkTextColor};";
+                            } else {
+                                // Custom styling DISABLED - gunakan global style dari styles['button']
+                                // JANGAN gunakan inline style, biarkan CSS global yang handle
+                                $inlineStyle = '';
                             }
                         @endphp
                         <a href="{{ $link['url'] }}"
@@ -889,78 +896,18 @@
         </script>
     @endif
 
-    <!-- Custom Link Colors Script -->
+    <!-- CSS Hover Effects - Menggunakan data dari database -->
     <script>
-        // Enhanced hover effects for links with custom colors
+        // Hapus JavaScript hover override - biarkan CSS hover berfungsi dengan data dari database
         document.addEventListener('DOMContentLoaded', function() {
-            const customLinks = document.querySelectorAll('.link-button[style]');
-
-            customLinks.forEach(link => {
-                const originalStyle = link.getAttribute('style');
-                const originalBackground = link.style.background;
-                const originalColor = link.style.color;
-
-                // Extract custom colors from inline style
-                let customBgColor = '';
-                let customTextColor = '';
-
-                if (originalBackground) {
-                    // Extract background color from inline style
-                    const bgMatch = originalBackground.match(/background:\s*([^;!]+)/);
-                    if (bgMatch) {
-                        customBgColor = bgMatch[1].trim();
-                    }
-                }
-
-                if (originalColor) {
-                    // Extract text color from inline style
-                    const colorMatch = originalColor.match(/color:\s*([^;!]+)/);
-                    if (colorMatch) {
-                        customTextColor = colorMatch[1].trim();
-                    }
-                }
-
-                // Store original hover state
-                link.addEventListener('mouseenter', function() {
-                    // Create enhanced hover effect for custom colored links
-                    this.style.transform = 'translateY(-2px)';
-
-                    // Add GLOW effect using custom background color
-                    if (customBgColor) {
-                        // Create glow effect with the custom background color
-                        this.style.boxShadow = `0 0 30px ${customBgColor}, 0 8px 25px rgba(0, 0, 0, 0.15)`;
-
-                        // Add subtle brightness effect
-                        const isDarkColor = customBgColor.includes('#') &&
-                            parseInt(customBgColor.slice(1, 3), 16) < 128;
-
-                        if (isDarkColor) {
-                            this.style.filter = 'brightness(1.15) saturate(1.1)';
-                        } else {
-                            this.style.filter = 'brightness(0.95) saturate(1.05)';
-                        }
-
-                        // Add subtle gradient overlay for depth
-                        this.style.background = `linear-gradient(135deg, ${customBgColor} 0%, ${customBgColor}dd 100%)`;
-                    }
-
-                    // Enhance text color on hover
-                    if (customTextColor) {
-                        const isDarkText = customTextColor.includes('#') &&
-                            parseInt(customTextColor.slice(1, 3), 16) < 128;
-
-                        if (!isDarkText) {
-                            // Make light text slightly brighter on hover
-                            this.style.color = `${customTextColor}ee`;
-                        }
-                    }
-                });
-
-                link.addEventListener('mouseleave', function() {
-                    // Restore original styles exactly
-                    this.setAttribute('style', originalStyle);
-                    this.style.filter = '';
-                });
+            console.log('✅ CSS Hover Effects aktif - menggunakan data dari database');
+            console.log('🎨 Button Hover Settings:', {
+                backgroundStart: '{{ $tautan->styles["buttonHover"]["backgroundStart"] ?? "#FFD700" }}',
+                backgroundEnd: '{{ $tautan->styles["buttonHover"]["backgroundEnd"] ?? "#FFFFFF" }}',
+                color: '{{ $tautan->styles["buttonHover"]["color"] ?? "#002366" }}',
+                borderColor: '{{ $tautan->styles["buttonHover"]["borderColor"] ?? "#FFD700" }}',
+                glowColor: '{{ $tautan->styles["buttonHover"]["glowColor"] ?? "#FFD700" }}',
+                glowBlur: '{{ $tautan->styles["buttonHover"]["glowBlur"] ?? 30 }}px'
             });
         });
     </script>

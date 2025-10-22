@@ -716,4 +716,38 @@
             </div>
         </div>
     @endif
+
+    @if (session()->has('public_url'))
+        <div class="fixed z-50 bottom-4 right-4 mb-16 animate-pulse">
+            <div class="px-6 py-4 bg-blue-50 border border-blue-400 rounded-lg shadow-lg">
+                <div class="flex items-center">
+                    <svg class="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
+                    </svg>
+                    <div>
+                        <p class="text-sm font-medium text-blue-800">Tautan Publik:</p>
+                        <a href="{{ session('public_url') }}" target="_blank" class="text-xs text-blue-600 hover:text-blue-800 underline break-all">
+                            {{ session('public_url') }}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
 </div>
+
+<script>
+    // Auto-hide flash messages after 5 seconds
+    document.addEventListener('DOMContentLoaded', function() {
+        const flashMessages = document.querySelectorAll('[class*="animate-pulse"]');
+        flashMessages.forEach(message => {
+            setTimeout(() => {
+                message.style.transition = 'opacity 0.5s ease-out';
+                message.style.opacity = '0';
+                setTimeout(() => {
+                    message.remove();
+                }, 500);
+            }, 5000);
+        });
+    });
+</script>

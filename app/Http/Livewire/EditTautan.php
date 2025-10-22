@@ -24,6 +24,12 @@ class EditTautan extends Component
     public $generatedHtml = '';
     public $previewHtml = '';
 
+    // Typography Color Picker Properties untuk Livewire
+    public $titleColorPicker = '#002366';
+    public $descriptionColorPicker = '#666666';
+    public $titleColorOpacity = 100;
+    public $descriptionColorOpacity = 100;
+
     // QR Color Picker Properties untuk Livewire
     public $qrBackgroundColorPicker = '#ffffff';
     public $qrBorderColorPicker = '#ffffff';
@@ -79,7 +85,9 @@ class EditTautan extends Component
         ],
         'buttonHover' => [
             'backgroundStart' => '#FFD700',
+            'backgroundStartOpacity' => 100,
             'backgroundEnd' => '#FFFFFF',
+            'backgroundEndOpacity' => 100,
             'color' => '#002366',
             'glowColor' => '#FFD700',
             'glowBlur' => '30',
@@ -206,7 +214,51 @@ class EditTautan extends Component
         // Load styles if exists
         if ($tautan->styles) {
             $this->styles = array_merge($this->styles, $tautan->styles);
+
+            // DEBUG: Log loaded buttonHover styles
+            logger('=== EDIT LOADED STYLES DEBUG ===');
+            logger('Loaded buttonHover from database:');
+            logger('  backgroundStart: ' . ($this->styles['buttonHover']['backgroundStart'] ?? 'NOT FOUND'));
+            logger('  backgroundEnd: ' . ($this->styles['buttonHover']['backgroundEnd'] ?? 'NOT FOUND'));
+            logger('  backgroundStartOpacity: ' . ($this->styles['buttonHover']['backgroundStartOpacity'] ?? 'NOT FOUND'));
+            logger('  backgroundEndOpacity: ' . ($this->styles['buttonHover']['backgroundEndOpacity'] ?? 'NOT FOUND'));
+            logger('  color: ' . ($this->styles['buttonHover']['color'] ?? 'NOT FOUND'));
+            logger('  borderColor: ' . ($this->styles['buttonHover']['borderColor'] ?? 'NOT FOUND'));
+            logger('  glowColor: ' . ($this->styles['buttonHover']['glowColor'] ?? 'NOT FOUND'));
+
+            // DEBUG: Log loaded container top gradient styles
+            logger('Loaded container topGradient from database:');
+            logger('  topGradientStart: ' . ($this->styles['container']['topGradientStart'] ?? 'NOT FOUND'));
+            logger('  topGradientEnd: ' . ($this->styles['container']['topGradientEnd'] ?? 'NOT FOUND'));
+            logger('  topGradientHeight: ' . ($this->styles['container']['topGradientHeight'] ?? 'NOT FOUND'));
+
+            // DEBUG: Log loaded Typography styles
+            logger('Loaded Typography from database:');
+            logger('  title.color: ' . ($this->styles['title']['color'] ?? 'NOT FOUND'));
+            logger('  title.fontSize: ' . ($this->styles['title']['fontSize'] ?? 'NOT FOUND'));
+            logger('  title.fontWeight: ' . ($this->styles['title']['fontWeight'] ?? 'NOT FOUND'));
+            logger('  description.color: ' . ($this->styles['description']['color'] ?? 'NOT FOUND'));
+            logger('  description.fontSize: ' . ($this->styles['description']['fontSize'] ?? 'NOT FOUND'));
+
+            // DEBUG: Log loaded Gradient styles
+            logger('Loaded Gradient styles from database:');
+            logger('  background.gradientStart: ' . ($this->styles['background']['gradientStart'] ?? 'NOT FOUND'));
+            logger('  background.gradientEnd: ' . ($this->styles['background']['gradientEnd'] ?? 'NOT FOUND'));
+            logger('  container.backgroundGradientStart: ' . ($this->styles['container']['backgroundGradientStart'] ?? 'NOT FOUND'));
+            logger('  container.backgroundGradientEnd: ' . ($this->styles['container']['backgroundGradientEnd'] ?? 'NOT FOUND'));
+            logger('  container.topGradientStart: ' . ($this->styles['container']['topGradientStart'] ?? 'NOT FOUND'));
+            logger('  container.topGradientEnd: ' . ($this->styles['container']['topGradientEnd'] ?? 'NOT FOUND'));
+            logger('  buttonHover.backgroundStart: ' . ($this->styles['buttonHover']['backgroundStart'] ?? 'NOT FOUND'));
+            logger('  buttonHover.backgroundEnd: ' . ($this->styles['buttonHover']['backgroundEnd'] ?? 'NOT FOUND'));
+            logger('  logo.backgroundGradientStart: ' . ($this->styles['logo']['backgroundGradientStart'] ?? 'NOT FOUND'));
+            logger('  logo.backgroundGradientEnd: ' . ($this->styles['logo']['backgroundGradientEnd'] ?? 'NOT FOUND'));
         }
+
+        // ✅ Initialize Typography Color Pickers from loaded database values
+        $this->initializeTypographyColorPickersFromLoadedStyles();
+
+        // ✅ Initialize QR Color Pickers from loaded database values
+        $this->initializeQRColorPickersFromLoadedStyles();
 
         // Set logo mode from database (will override defaults)
         $this->useUploadedLogo = $tautan->use_uploaded_logo ?? false;
@@ -247,6 +299,52 @@ class EditTautan extends Component
     }
 
     /**
+     * Initialize QR Color Picker values from loaded database styles
+     */
+    private function initializeQRColorPickersFromLoadedStyles()
+    {
+        // Get QR colors from loaded styles
+        $qrStyles = $this->styles['qrcode'] ?? [];
+
+        if (!empty($qrStyles)) {
+            // Extract hex colors from rgba values
+            $bgColor = $qrStyles['backgroundColor'] ?? '#ffffff';
+            $borderColor = $qrStyles['borderColor'] ?? '#ffffff';
+            $darkColor = $qrStyles['darkColor'] ?? '#000000';
+
+            // Convert to hex if rgba format
+            $this->qrBackgroundColorPicker = $this->rgbaToHex($bgColor);
+            $this->qrBorderColorPicker = $this->rgbaToHex($borderColor);
+            $this->qrDarkColorPicker = $this->rgbaToHex($darkColor);
+
+            // Extract opacity from RGBA values if present
+            $this->qrBackgroundOpacity = $this->extractOpacityFromRgba($bgColor) * 100;
+            $this->qrBorderOpacity = $this->extractOpacityFromRgba($borderColor) * 100;
+            $this->qrDarkOpacity = $this->extractOpacityFromRgba($darkColor) * 100;
+
+            logger('🎨 QR Color Pickers initialized from database:');
+            logger('   Background: ' . $this->qrBackgroundColorPicker . ' (Opacity: ' . $this->qrBackgroundOpacity . '%)');
+            logger('   Border: ' . $this->qrBorderColorPicker . ' (Opacity: ' . $this->qrBorderOpacity . '%)');
+            logger('   Dark: ' . $this->qrDarkColorPicker . ' (Opacity: ' . $this->qrDarkOpacity . '%)');
+        }
+    }
+
+    /**
+     * Extract opacity value from RGBA color string
+     */
+    private function extractOpacityFromRgba($color)
+    {
+        if (strpos($color, 'rgba') === 0) {
+            // Extract alpha from rgba(r, g, b, a)
+            preg_match('/rgba\((\d+),\s*(\d+),\s*(\d+),\s*([\d.]+)\)/', $color, $matches);
+            if (count($matches) >= 5) {
+                return floatval($matches[4]);
+            }
+        }
+        return 1.0; // Default opacity for hex colors
+    }
+
+    /**
      * Initialize QR Color Picker values from default styles
      */
     private function initializeQRColorPickers()
@@ -276,6 +374,32 @@ class EditTautan extends Component
     }
 
     /**
+     * Initialize Typography Color Picker values from loaded database styles
+     */
+    private function initializeTypographyColorPickersFromLoadedStyles()
+    {
+        // Get Typography colors from loaded styles
+        $titleColor = $this->styles['title']['color'] ?? '#002366';
+        $descriptionColor = $this->styles['description']['color'] ?? '#666666';
+
+        // Convert to hex if rgba format
+        $this->titleColorPicker = $this->rgbaToHex($titleColor);
+        $this->descriptionColorPicker = $this->rgbaToHex($descriptionColor);
+
+        // Extract opacity from RGBA values if present
+        $this->titleColorOpacity = $this->extractOpacityFromRgba($titleColor) * 100;
+        $this->descriptionColorOpacity = $this->extractOpacityFromRgba($descriptionColor) * 100;
+
+        // Update styles dengan format HEX untuk color picker
+        $this->styles['title']['color'] = $this->titleColorPicker;
+        $this->styles['description']['color'] = $this->descriptionColorPicker;
+
+        logger('🎨 Typography Color Pickers initialized from database:');
+        logger('   Title Color: ' . $this->titleColorPicker . ' (Opacity: ' . $this->titleColorOpacity . '%)');
+        logger('   Description Color: ' . $this->descriptionColorPicker . ' (Opacity: ' . $this->descriptionColorOpacity . '%)');
+    }
+
+    /**
      * Convert rgba to hex for color picker initialization
      */
     private function rgbaToHex($color)
@@ -301,6 +425,31 @@ class EditTautan extends Component
         }
 
         // Return as-is if already hex or other format
+        return $color;
+    }
+
+    /**
+     * Process color with opacity to create RGBA format
+     */
+    private function processColorWithOpacity($color, $opacity = 100)
+    {
+        // Remove # if present
+        $hexColor = ltrim($color, '#');
+
+        // Convert hex to RGB
+        if (strlen($hexColor) === 6) {
+            $r = hexdec(substr($hexColor, 0, 2));
+            $g = hexdec(substr($hexColor, 2, 2));
+            $b = hexdec(substr($hexColor, 4, 2));
+
+            // Convert opacity percentage to decimal (0-1)
+            $alpha = $opacity / 100;
+
+            // Return RGBA format
+            return "rgba({$r}, {$g}, {$b}, {$alpha})";
+        }
+
+        // Return as-is if not a valid hex color
         return $color;
     }
 
@@ -478,7 +627,9 @@ class EditTautan extends Component
             ],
             'buttonHover' => [
                 'backgroundStart' => '#FFD700',
+                'backgroundStartOpacity' => 100,
                 'backgroundEnd' => '#FFFFFF',
+                'backgroundEndOpacity' => 100,
                 'color' => '#002366',
                 'glowColor' => '#FFD700',
                 'glowBlur' => '30',
@@ -775,6 +926,92 @@ class EditTautan extends Component
         $this->updateQRColorsFromPickers();
     }
 
+    // ===== BUTTON NORMAL SETTINGS - AUTO UPDATE PREVIEW =====
+    public function updatedStylesButtonBackgroundColor()
+    {
+        logger('🎨 EDIT Button Background Color updated: ' . ($this->styles['button']['backgroundColor'] ?? 'not set'));
+        $this->generatePreview();
+    }
+
+    public function updatedStylesButtonColor()
+    {
+        logger('🎨 EDIT Button Text Color updated: ' . ($this->styles['button']['color'] ?? 'not set'));
+        $this->generatePreview();
+    }
+
+    public function updatedStylesButtonBorderColor()
+    {
+        logger('🎨 EDIT Button Border Color updated: ' . ($this->styles['button']['borderColor'] ?? 'not set'));
+        $this->generatePreview();
+    }
+
+    public function updatedStylesButtonBorderWidth()
+    {
+        logger('🎨 EDIT Button Border Width updated: ' . ($this->styles['button']['borderWidth'] ?? 'not set'));
+        $this->generatePreview();
+    }
+
+    public function updatedStylesButtonBorderStyle()
+    {
+        logger('🎨 EDIT Button Border Style updated: ' . ($this->styles['button']['borderStyle'] ?? 'not set'));
+        $this->generatePreview();
+    }
+
+    public function updatedStylesButtonBorderRadius()
+    {
+        logger('🎨 EDIT Button Border Radius updated: ' . ($this->styles['button']['borderRadius'] ?? 'not set'));
+        $this->generatePreview();
+    }
+
+    // ===== BUTTON HOVER SETTINGS - AUTO UPDATE PREVIEW =====
+    public function updatedStylesButtonHoverBackgroundStart()
+    {
+        logger('🎨 EDIT Button Hover Background Start updated: ' . ($this->styles['buttonHover']['backgroundStart'] ?? 'not set'));
+        $this->generatePreview();
+    }
+
+    public function updatedStylesButtonHoverBackgroundEnd()
+    {
+        logger('🎨 EDIT Button Hover Background End updated: ' . ($this->styles['buttonHover']['backgroundEnd'] ?? 'not set'));
+        $this->generatePreview();
+    }
+
+    public function updatedStylesButtonHoverColor()
+    {
+        logger('🎨 EDIT Button Hover Text Color updated: ' . ($this->styles['buttonHover']['color'] ?? 'not set'));
+        $this->generatePreview();
+    }
+
+    public function updatedStylesButtonHoverBorderColor()
+    {
+        logger('🎨 EDIT Button Hover Border Color updated: ' . ($this->styles['buttonHover']['borderColor'] ?? 'not set'));
+        $this->generatePreview();
+    }
+
+    public function updatedStylesButtonHoverBorderWidth()
+    {
+        logger('🎨 EDIT Button Hover Border Width updated: ' . ($this->styles['buttonHover']['borderWidth'] ?? 'not set'));
+        $this->generatePreview();
+    }
+
+    public function updatedStylesButtonHoverBorderStyle()
+    {
+        logger('🎨 EDIT Button Hover Border Style updated: ' . ($this->styles['buttonHover']['borderStyle'] ?? 'not set'));
+        $this->generatePreview();
+    }
+
+    public function updatedStylesButtonHoverGlowColor()
+    {
+        logger('🎨 EDIT Button Hover Glow Color updated: ' . ($this->styles['buttonHover']['glowColor'] ?? 'not set'));
+        $this->generatePreview();
+    }
+
+    public function updatedStylesButtonHoverGlowBlur()
+    {
+        logger('🎨 EDIT Button Hover Glow Blur updated: ' . ($this->styles['buttonHover']['glowBlur'] ?? 'not set'));
+        $this->generatePreview();
+    }
+
     /**
      * Update QR colors from pickers with opacity
      */
@@ -831,6 +1068,14 @@ class EditTautan extends Component
             logger('Links count: ' . count($this->links));
 
             $this->previewHtml = $this->buildHtml(true);
+
+            // DEBUG: Check if CSS debug comment is in previewHtml
+            if (strpos($this->previewHtml, 'DEBUG EDIT-TAUTAN') !== false) {
+                logger('✅ DEBUG CSS comment found in previewHtml');
+            } else {
+                logger('❌ DEBUG CSS comment NOT found in previewHtml');
+            }
+
             logger('Preview generated successfully, length: ' . strlen($this->previewHtml));
         } catch (\Exception $e) {
             logger('Error generating preview: ' . $e->getMessage());
@@ -1079,19 +1324,21 @@ class EditTautan extends Component
             $linkUrl = htmlspecialchars($link['url'], ENT_QUOTES, 'UTF-8');
             $linkJudul = htmlspecialchars($link['judul'], ENT_QUOTES, 'UTF-8');
 
-            // PERBAIKAN: Gunakan toggle system untuk per-link styling
-            if ($link['enableCustomStyling'] ?? false) {
-                // Custom styling ENABLED - gunakan warna dari link ini
+            // PERBAIKAN FINAL: CONTEK EXACT HTML structure dari public.blade.php!
+            // Conditional inline styling - HANYA untuk custom styling per-link (SAMA dengan public.blade.php)
+            $enableCustomStyling = $link['enableCustomStyling'] ?? false;
+
+            if ($enableCustomStyling) {
+                // Custom styling ENABLED - gunakan warna dari link ini (EXACT method dari public.blade.php)
                 $linkBgColor = htmlspecialchars($link['backgroundColor'] ?? $this->styles['button']['backgroundColor'], ENT_QUOTES, 'UTF-8');
                 $linkTextColor = htmlspecialchars($link['textColor'] ?? $this->styles['button']['color'], ENT_QUOTES, 'UTF-8');
-                // Build link dengan inline styles dari link ini
-                $linkItems .= "            <a href=\"{$linkUrl}\" class=\"link-button\" style=\"background: {$linkBgColor}; color: {$linkTextColor};\" target=\"_blank\" rel=\"noopener noreferrer\">{$linkJudul}</a>\n";
+                // Build inline style dengan warna dari link ini (EXACT method dari public.blade.php)
+                $inlineStyle = "background: {$linkBgColor}; color: {$linkTextColor};";
+                $linkItems .= "                        <a href=\"{$linkUrl}\" class=\"link-button custom-styled\" style=\"{$inlineStyle}\" target=\"_blank\" rel=\"noopener noreferrer\">\n                            {$linkJudul}\n                        </a>\n";
             } else {
-                // Custom styling DISABLED - gunakan global style dari styles['button']
-                $linkBgColor = htmlspecialchars($this->styles['button']['backgroundColor'], ENT_QUOTES, 'UTF-8');
-                $linkTextColor = htmlspecialchars($this->styles['button']['color'], ENT_QUOTES, 'UTF-8');
-                // Build link dengan inline styles dari global button style
-                $linkItems .= "            <a href=\"{$linkUrl}\" class=\"link-button\" style=\"background: {$linkBgColor}; color: {$linkTextColor};\" target=\"_blank\" rel=\"noopener noreferrer\">{$linkJudul}</a>\n";
+                // Custom styling DISABLED - gunakan global style dari styles['button'] (EXACT method dari public.blade.php)
+                // JANGAN gunakan inline style, biarkan CSS global yang handle hover effects! (EXACT dari public.blade.php)
+                $linkItems .= "                        <a href=\"{$linkUrl}\" class=\"link-button\" target=\"_blank\" rel=\"noopener noreferrer\">\n                            {$linkJudul}\n                        </a>\n";
             }
         }
 
@@ -1364,6 +1611,22 @@ class EditTautan extends Component
 
     // Hover effects - UPDATED: menggunakan warna yang dinamis
     document.addEventListener('DOMContentLoaded', function() {
+        // 🎯 PERBAIKAN: DISABLE applyCustomColors - CSS sudah menghandle semua styling!
+        // JANGAN gunakan JavaScript inline styles karena akan override CSS hover effects
+        // CSS sudah mencakup normal state dan hover state dengan benar
+
+        // // Apply custom colors to links with data attributes - DISABLED
+        // const customLinks = document.querySelectorAll('.link-custom');
+        // customLinks.forEach(link => {
+        //     const bgColor = link.getAttribute('data-bg-color');
+        //     const textColor = link.getAttribute('data-text-color');
+        //     if (bgColor) link.style.background = bgColor;
+        //     if (textColor) link.style.color = textColor;
+        // });
+
+        console.log('🎯 CSS-only styling enabled (JavaScript custom colors disabled)');
+
+        // Copy button hover effects
         const btn = document.getElementById('copyLinkBtn');
         const originalBg = '{$safeButtonBgColor}';
 
@@ -1583,17 +1846,35 @@ class EditTautan extends Component
             $bg['direction'] ?? '135'
         );
 
-        $topGradient = $this->buildGradient(
-            $container['topGradientStart'] ?? '#FFD700',
-            $container['topGradientEnd'] ?? '#002366',
-            '90'
+        // PERBAIKAN: Samakan dengan public.blade.php method yang WORKING!
+        $topGradientStart = $container['topGradientStart'] ?? '#FFD700';
+        $topGradientEnd = $container['topGradientEnd'] ?? '#002366';
+        $topGradient = "linear-gradient(90deg, {$topGradientStart}, {$topGradientEnd})";
+
+        // DEBUG: Log top gradient colors
+        logger('=== TOP GRADIENT DEBUG ===');
+        logger('Top Gradient Start: ' . $topGradientStart);
+        logger('Top Gradient End: ' . $topGradientEnd);
+        logger('Generated Top Gradient: ' . $topGradient);
+
+        // Process colors with opacity for hover gradient
+        $hoverBgStartWithOpacity = $this->processColorWithOpacity(
+            $buttonHover['backgroundStart'] ?? '#FFD700',
+            $buttonHover['backgroundStartOpacity'] ?? 100
+        );
+        $hoverBgEndWithOpacity = $this->processColorWithOpacity(
+            $buttonHover['backgroundEnd'] ?? '#FFFFFF',
+            $buttonHover['backgroundEndOpacity'] ?? 100
         );
 
-        $buttonHoverBg = $this->buildGradient(
-            $buttonHover['backgroundStart'] ?? '#FFD700',
-            $buttonHover['backgroundEnd'] ?? '#FFFFFF',
-            '135'
-        );
+        // PERBAIKAN FINAL: SAMAKAN dengan BuatTautan method yang WORKING!
+        $buttonHoverBg = "linear-gradient(135deg, {$hoverBgStartWithOpacity}, {$hoverBgEndWithOpacity})";
+
+        // Debug: Log hover background colors
+        logger('=== EDIT BUTTON HOVER DEBUG ===');
+        logger('buttonHover backgroundStart: ' . ($buttonHover['backgroundStart'] ?? 'NOT SET'));
+        logger('buttonHover backgroundEnd: ' . ($buttonHover['backgroundEnd'] ?? 'NOT SET'));
+        logger('Generated buttonHoverBg: ' . $buttonHoverBg);
 
         $containerBackground = $this->buildBackgroundStyle($container);
         $logoBackground = $this->buildBackgroundStyle($logo);
@@ -1685,7 +1966,7 @@ class EditTautan extends Component
             left: 0;
             right: 0;
             height: {$container['topGradientHeight']}px;
-            {$topGradient}
+            background: {$topGradient}
         }
 
         @keyframes fadeInUp {
@@ -1748,14 +2029,33 @@ class EditTautan extends Component
             font-weight: 600;
             font-size: 15px;
             border: {$button['borderWidth']}px {$button['borderStyle']} {$button['borderColor']};
+            background: {$button['backgroundColor']};
+            color: {$button['color']};
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
         }
 
-        .link-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 0 {$buttonHover['glowBlur']}px {$buttonHover['glowColor']};
+        .link-button:hover:not(.custom-styled) {
+            /* DEBUG EDIT-TAUTAN: Generated buttonHoverBg = {$buttonHoverBg} */
+            transform: translateY(-2px) !important;
+            background: {$buttonHoverBg} !important;
+            color: {$buttonHover['color']} !important;
+            border: {$buttonHover['borderWidth']}px {$buttonHover['borderStyle']} {$buttonHover['borderColor']} !important;
+            box-shadow: 0 0 {$buttonHover['glowBlur']}px {$buttonHover['glowColor']} !important;
+        }
+
+        /* Custom styled links - PARSIAL hover: transform + glow effects ONLY */
+        .link-button.custom-styled:hover {
+            transform: translateY(-2px) !important;
+            /* Keep original custom background and text colors */
+            border: {$buttonHover['borderWidth']}px {$buttonHover['borderStyle']} {$buttonHover['borderColor']} !important;
+            box-shadow: 0 0 {$buttonHover['glowBlur']}px {$buttonHover['glowColor']} !important;
+        }
+
+        /* Custom styled links - use data attributes for individual styling */
+        .link-custom {
+            /* Custom background and text colors will be set via JavaScript from data attributes */
         }
 
         .footer {

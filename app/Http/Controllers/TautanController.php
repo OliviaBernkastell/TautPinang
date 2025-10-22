@@ -126,7 +126,12 @@ class TautanController extends Controller
         // Cari tautan berdasarkan slug
         $tautan = Tautan::where('slug', $slug)
             ->where('is_active', true)
-            ->firstOrFail();
+            ->first();
+
+        // Jika tautan tidak ditemukan, tampilkan custom 404 page
+        if (!$tautan) {
+            return $this->showCustom404($slug);
+        }
 
         // Render HTML langsung
         return $this->renderTautanPage($tautan);
@@ -439,5 +444,29 @@ class TautanController extends Controller
         $qrUrl = "https://api.qrserver.com/v1/create-qr-code/?size={$qrSize}x{$qrSize}&data={$data}&color={$darkColorApi}&bgcolor={$bgColorApi}&margin=2";
 
         return $qrUrl;
+    }
+
+    /**
+     * 🎨 Custom 404 Page dengan branding
+     */
+    private function showCustom404($slug)
+    {
+        // Data untuk custom 404 page
+        $data = [
+            'slug' => $slug,
+            'logo_url' => 'https://i.pinimg.com/474x/e4/8a/b2/e48ab2e2e8055f15f04caf6968c1314a.jpg', // Logo kamu
+            'title' => 'Tautan Tidak Ditemukan',
+            'message' => "Tautan ini tidak ada",
+            'suggestions' => [
+                'Periksa kembali URL yang Anda masukkan',
+                'Hubungi pemilik tautan untuk memastikan link masih aktif',
+                'Buat tautan baru secara gratis di Taut Pinang'
+            ],
+            'back_url' => url('/dashboard'),
+            'create_url' => url('/buat-tautan')
+        ];
+
+        // Return 404 HTTP status tetapi dengan custom view
+        return response()->view('tautan.404', $data, 404);
     }
 }
