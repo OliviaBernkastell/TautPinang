@@ -23,7 +23,7 @@
     @livewireStyles
 </head>
 
-<body class="bg-gray-50 dark:bg-gray-900">
+<body class="bg-gray-50">
     <x-banner />
 
     <!-- Sidebar -->
@@ -196,6 +196,36 @@
 
     <!-- Custom JS for seamless navigation -->
     <script>
+        // Fungsi untuk deteksi dan mengatur tema otomatis berdasarkan preferensi sistem
+        function detectAndSetSystemTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+            // Jika tidak ada tema yang tersimpan, gunakan preferensi sistem
+            if (!savedTheme) {
+                const theme = systemPrefersDark ? 'dark' : 'light';
+                document.documentElement.setAttribute('data-theme', theme);
+                localStorage.setItem('theme', theme);
+            } else {
+                // Gunakan tema yang tersimpan
+                document.documentElement.setAttribute('data-theme', savedTheme);
+            }
+        }
+
+        // Inisialisasi tema sebelum DOM loaded
+        detectAndSetSystemTheme();
+
+        // Listener untuk perubahan preferensi sistem
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+            const savedTheme = localStorage.getItem('theme');
+            // Hanya update otomatis jika user tidak pernah mengatur tema manual
+            if (!savedTheme || savedTheme === 'system') {
+                const newTheme = e.matches ? 'dark' : 'light';
+                document.documentElement.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+            }
+        });
+
         // Debug Livewire events
         document.addEventListener('livewire:navigating', () => {
             console.log('Livewire navigating...');
@@ -206,12 +236,129 @@
             console.log('Livewire navigated!');
             document.body.style.cursor = 'default';
 
+            // Re-apply theme after navigation
+            detectAndSetSystemTheme();
+
             // Reinitialize Flowbite components
             if (typeof initFlowbite !== 'undefined') {
                 initFlowbite();
             }
         });
     </script>
+
+    <!-- Dark Mode Styles for Layout -->
+    <style>
+        /* Main Background - Dark Mode */
+        [data-theme="dark"] .bg-gray-50 {
+            background: #111827 !important;
+        }
+
+        /* Sidebar - Dark Mode */
+        [data-theme="dark"] .bg-white {
+            background: rgba(17, 24, 39, 0.95) !important;
+        }
+
+        [data-theme="dark"] .border-gray-200 {
+            border-color: rgba(55, 65, 81, 0.3) !important;
+        }
+
+        [data-theme="dark"] .border-gray-700 {
+            border-color: rgba(55, 65, 81, 0.3) !important;
+        }
+
+        /* Navigation Items - Dark Mode */
+        [data-theme="dark"] .text-gray-900 {
+            color: #f3f4f6 !important;
+        }
+
+        [data-theme="dark"] .text-gray-500 {
+            color: #9ca3af !important;
+        }
+
+        [data-theme="dark"] .text-gray-400 {
+            color: #6b7280 !important;
+        }
+
+        [data-theme="dark"] .hover\:text-gray-900:hover {
+            color: #f3f4f6 !important;
+        }
+
+        [data-theme="dark"] .hover\:text-white:hover {
+            color: #f3f4f6 !important;
+        }
+
+        /* Hover States - Dark Mode */
+        [data-theme="dark"] .hover\:bg-gray-100:hover {
+            background: rgba(55, 65, 81, 0.5) !important;
+        }
+
+        [data-theme="dark"] .hover\:bg-gray-700:hover {
+            background: rgba(55, 65, 81, 0.7) !important;
+        }
+
+        /* Active States - Dark Mode */
+        [data-theme="dark"] .bg-gray-100 {
+            background: rgba(55, 65, 81, 0.5) !important;
+        }
+
+        [data-theme="dark"] .bg-gray-700 {
+            background: rgba(55, 65, 81, 0.5) !important;
+        }
+
+        /* Page Header - Dark Mode */
+        [data-theme="dark"] header.bg-white {
+            background: rgba(17, 24, 39, 0.95) !important;
+        }
+
+        /* Mobile Menu Button - Dark Mode */
+        [data-theme="dark"] .text-gray-500 {
+            color: #9ca3af !important;
+        }
+
+        [data-theme="dark"] .hover\:bg-gray-100:hover {
+            background: rgba(55, 65, 81, 0.5) !important;
+        }
+
+        /* User Dropdown - Dark Mode */
+        [data-theme="dark"] .bg-white {
+            background: rgba(17, 24, 39, 0.95) !important;
+        }
+
+        [data-theme="dark"] .divide-gray-100 > * {
+            border-color: rgba(55, 65, 81, 0.3) !important;
+        }
+
+        [data-theme="dark"] .text-gray-700 {
+            color: #d1d5db !important;
+        }
+
+        [data-theme="dark"] .hover\:bg-gray-600:hover {
+            background: rgba(75, 85, 99, 0.5) !important;
+        }
+
+        [data-theme="dark"] .text-gray-200 {
+            color: #e5e7eb !important;
+        }
+
+        /* Mobile Menu - Dark Mode */
+        [data-theme="dark"] .bg-gray-50 {
+            background: #111827 !important;
+        }
+
+        /* Shadow Effects - Dark Mode */
+        [data-theme="dark"] .shadow {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2) !important;
+        }
+
+        [data-theme="dark"] .shadow-lg {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2) !important;
+        }
+
+        /* Transitions */
+        [data-theme="dark"] * {
+            transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+        }
+    </style>
 </body>
 
 </html>
