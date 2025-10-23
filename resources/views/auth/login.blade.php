@@ -226,16 +226,14 @@
                                     </span>
                                 </a>
 
-                                <!-- Register Link -->
+                                <!-- Register Info -->
                                 <div class="mt-6 text-center">
-                                    <p class="register-text text-gray-600">
-                                        Belum punya akun?
-                                        <a href="{{ route('register') }}" class="register-link text-transparent transition-all hover:underline bg-gradient-to-r from-blue-600 to-emerald-600 bg-clip-text">
-                                            Daftar sekarang
-                                        </a>
+                                    <p class="register-info-text text-gray-600">
+                                        Untuk mendaftar akun baru, silakan hubungi
+                                        <span class="font-semibold text-transparent bg-gradient-to-r from-blue-600 to-emerald-600 bg-clip-text">Admin TautPinang</span>
                                     </p>
                                 </div>
-                            </form>
+                              </form>
                         </div>
                     </div>
                 </div>
@@ -563,11 +561,11 @@
             color: #9ca3af !important;
         }
 
-        [data-theme="dark"] .register-text {
+        [data-theme="dark"] .register-info-text {
             color: #d1d5db !important;
         }
 
-        [data-theme="dark"] .register-link {
+        [data-theme="dark"] .register-info-text span {
             background: linear-gradient(to right, #60a5fa, #34d399);
             -webkit-background-clip: text;
             background-clip: text;
