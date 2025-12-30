@@ -313,6 +313,29 @@
                                                 wire:model.debounce.500ms="links.{{ $index }}.judul"
                                                 class="w-full px-3 py-2 mb-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                                                 placeholder="Judul Tautan (contoh: 🌐 Website Resmi)">
+
+                                            <!-- Icon Picker -->
+                                            <div class="mb-2">
+                                                <label class="block mb-1 text-xs font-medium text-gray-600">Icon (Opsional)</label>
+                                                <div class="flex items-center gap-2">
+                                                    @if(!empty($link['icon']))
+                                                        <button type="button" wire:click="selectIcon({{ $index }})"
+                                                            class="px-3 py-2 bg-purple-100 text-purple-700 text-sm rounded-lg hover:bg-purple-200 transition-colors border border-purple-300">
+                                                            <i class="{{ $link['icon'] }} mr-1"></i> Ganti Icon
+                                                        </button>
+                                                        <button type="button" wire:click="removeIcon({{ $index }})"
+                                                            class="px-3 py-2 bg-red-100 text-red-700 text-sm rounded-lg hover:bg-red-200 transition-colors border border-red-300">
+                                                            <i class="fas fa-times"></i> Hapus
+                                                        </button>
+                                                    @else
+                                                        <button type="button" wire:click="selectIcon({{ $index }})"
+                                                            class="px-4 py-2 bg-purple-600 text-white text-sm rounded-lg hover:bg-purple-700 transition-colors">
+                                                            <i class="fas fa-icons mr-1"></i> Pilih Icon
+                                                        </button>
+                                                    @endif
+                                                </div>
+                                            </div>
+
                                             <input type="url"
                                                 wire:model.debounce.500ms="links.{{ $index }}.url"
                                                 class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -1901,7 +1924,7 @@
                                         class="absolute top-12 bottom-12 left-4 right-4 bg-white rounded-[20px] overflow-hidden">
                                         <iframe id="previewFrame" srcdoc="{{ $this->previewHtml }}"
                                             class="w-full h-full"
-                                            sandbox="allow-scripts allow-same-origin allow-images"
+                                            sandbox="allow-scripts allow-same-origin"
                                             style="border: none;"></iframe>
                                     </div>
                                 </div>
@@ -1939,7 +1962,7 @@
                                     <!-- Browser Content -->
                                     <div class="absolute inset-0 overflow-auto bg-white rounded-lg shadow-2xl top-10">
                                         <iframe srcdoc="{{ $this->previewHtml }}" class="w-full h-full"
-                                            sandbox="allow-scripts allow-same-origin allow-images"
+                                            sandbox="allow-scripts allow-same-origin"
                                             style="border: none;"></iframe>
                                     </div>
                                 </div>
@@ -2029,6 +2052,65 @@
             </div>
         </div>
     </div>
+
+    <!-- Icon Picker Modal -->
+    @if($showIconPicker)
+        <div class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/30 backdrop-blur-sm p-4">
+            <div class="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[85vh] flex flex-col">
+                <!-- Header -->
+                <div class="flex items-center justify-between p-4 border-b">
+                    <h3 class="text-lg font-semibold">Pilih Icon</h3>
+                    <button wire:click="closeIconPicker" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+
+                <!-- Icon Grid -->
+                <div class="flex-1 overflow-y-auto p-4">
+                    <div class="grid grid-cols-10 gap-1" id="iconGrid">
+                        @php
+                            $iconCategories = [
+                                'Populer' => ['fa-star', 'fa-heart', 'fa-home', 'fa-user', 'fa-envelope', 'fa-phone', 'fa-globe', 'fa-link', 'fa-download', 'fa-check'],
+                                'Media' => ['fa-image', 'fa-camera', 'fa-video', 'fa-music', 'fa-microphone', 'fa-film', 'fa-headphones', 'fa-photo-film', 'fa-play', 'fa-pause'],
+                                'File' => ['fa-file', 'fa-file-pdf', 'fa-file-word', 'fa-file-excel', 'fa-file-powerpoint', 'fa-file-zipper', 'fa-file-code', 'fa-file-audio', 'fa-file-video', 'fa-file-image'],
+                                'Sosial' => ['fa-facebook', 'fa-twitter', 'fa-instagram', 'fa-youtube', 'fa-linkedin', 'fa-tiktok', 'fa-whatsapp', 'fa-telegram', 'fa-discord', 'fa-github'],
+                                'E-commerce' => ['fa-cart-shopping', 'fa-bag-shopping', 'fa-wallet', 'fa-credit-card', 'fa-money-bill', 'fa-receipt', 'fa-truck', 'fa-box', 'fa-tag', 'fa-percent'],
+                                'Teknologi' => ['fa-laptop', 'fa-mobile', 'fa-tablet', 'fa-desktop', 'fa-wifi', 'fa-bluetooth', 'fa-battery-full', 'fa-charging-station', 'fa-qrcode', 'fa-barcode'],
+                                'Kantor' => ['fa-building', 'fa-city', 'fa-store', 'fa-warehouse', 'fa-industry', 'fa-landmark', 'fa-calendar', 'fa-clock', 'fa-briefcase', 'fa-id-card'],
+                                'Data' => ['fa-chart-bar', 'fa-chart-line', 'fa-chart-pie', 'fa-database', 'fa-server', 'fa-cloud', 'fa-table', 'fa-spreadsheet', 'fa-analytics', 'fa-project-diagram'],
+                                'Transport' => ['fa-car', 'fa-truck', 'fa-bus', 'fa-train', 'fa-plane', 'fa-ship', 'fa-motorcycle', 'fa-bicycle', 'fa-taxi', 'fa-rocket'],
+                                'Cuaca' => ['fa-sun', 'fa-moon', 'fa-cloud', 'fa-cloud-sun', 'fa-cloud-rain', 'fa-bolt', 'fa-snowflake', 'fa-temperature-half', 'fa-wind', 'fa-water'],
+                            ];
+                        @endphp
+
+                        @foreach($iconCategories as $category => $icons)
+                            <div class="contents">
+                                <div class="col-span-10 text-xs font-semibold text-gray-500 uppercase tracking-wide py-2 mt-2">{{ $category }}</div>
+                                @foreach($icons as $icon)
+                                    <button wire:click="setIcon('fa-solid {{ $icon }}')"
+                                        class="flex items-center justify-center w-full aspect-square p-2 rounded hover:bg-purple-100 transition-colors group">
+                                        <i class="fa-solid {{ $icon }} text-gray-600 group-hover:text-purple-600"></i>
+                                    </button>
+                                @endforeach
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+
+                <!-- Footer -->
+                <div class="flex items-center justify-between p-4 border-t">
+                    <button wire:click="removeIcon"
+                        class="px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+                        <i class="fas fa-times mr-1"></i> Hapus Icon
+                    </button>
+                    <button wire:click="closeIconPicker"
+                        class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors">
+                        Batal
+                    </button>
+                </div>
+            </div>
+        </div>
+    @endif
 
     <script>
         // Fungsi untuk deteksi dan mengatur tema otomatis berdasarkan preferensi sistem

@@ -156,8 +156,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
         rel="stylesheet">
     <link rel="icon" href="{{ asset('img/favicon_public.png') }}" type="image/png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-    
+
     <!-- Dynamic Styles -->
     <style>
         * {
@@ -504,7 +505,10 @@
         }
 
         .link-button {
-            display: block;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
             padding: 16px 20px;
 
             @php
@@ -529,6 +533,11 @@
             transition: all {{ $hoverDuration }}s ease;
             position: relative;
             overflow: hidden;
+        }
+
+        .link-icon {
+            font-size: 18px;
+            flex-shrink: 0;
         }
 
         .link-button:hover {
@@ -655,6 +664,13 @@
                             // Gunakan logika yang SAMA seperti EditTautan->buildHtml()
                             $enableCustomStyling = $link['enableCustomStyling'] ?? false;
 
+                            // Icon support
+                            $icon = $link['icon'] ?? '';
+                            $iconHtml = '';
+                            if (!empty($icon)) {
+                                $iconHtml = '<i class="' . $icon . ' link-icon"></i> ';
+                            }
+
                             if ($enableCustomStyling) {
                                 // Custom styling ENABLED - gunakan warna dari link ini
                                 $linkBgColor = $link['backgroundColor'] ?? $tautan->styles['button']['backgroundColor'];
@@ -675,7 +691,7 @@
                                style="{{ $inlineStyle }}"
                            @endif
                         >
-                            {{ $link['judul'] }}
+                            {!! $iconHtml !!}{{ $link['judul'] }}
                         </a>
                     @endif
                 @endforeach

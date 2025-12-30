@@ -130,6 +130,10 @@ class EditTautan extends Component
 
     public $stylesJson = '';
 
+    // Icon picker
+    public $showIconPicker = false;
+    public $selectedLinkIndex = null;
+
     protected $rules = [
         'judul' => 'required|min:3|max:100',
         'slug' => 'required|min:3|max:50|regex:/^[a-zA-Z0-9\-_]+$/',
@@ -1042,6 +1046,7 @@ class EditTautan extends Component
         $this->links[] = [
             'judul' => '',
             'url' => '',
+            'icon' => '', // Icon - kosong berarti tidak ada icon
             // PERBAIKAN: Toggle system untuk per-link styling
             'enableCustomStyling' => false, // DEFAULT: DISABLED - gunakan global style
             'backgroundColor' => '#FFFFFF', // Default white background (hanya digunakan jika enableCustomStyling = true)
@@ -1368,6 +1373,13 @@ class EditTautan extends Component
             $linkUrl = htmlspecialchars($link['url'], ENT_QUOTES, 'UTF-8');
             $linkJudul = htmlspecialchars($link['judul'], ENT_QUOTES, 'UTF-8');
 
+            // Icon support
+            $icon = $link['icon'] ?? '';
+            $iconHtml = '';
+            if (!empty($icon)) {
+                $iconHtml = "<i class=\"{$icon} link-icon\"></i> ";
+            }
+
             // PERBAIKAN FINAL: CONTEK EXACT HTML structure dari public.blade.php!
             // Conditional inline styling - HANYA untuk custom styling per-link (SAMA dengan public.blade.php)
             $enableCustomStyling = $link['enableCustomStyling'] ?? false;
@@ -1378,11 +1390,11 @@ class EditTautan extends Component
                 $linkTextColor = htmlspecialchars($link['textColor'] ?? $this->styles['button']['color'], ENT_QUOTES, 'UTF-8');
                 // Build inline style dengan warna dari link ini (EXACT method dari public.blade.php)
                 $inlineStyle = "background: {$linkBgColor}; color: {$linkTextColor};";
-                $linkItems .= "                        <a href=\"{$linkUrl}\" class=\"link-button custom-styled\" style=\"{$inlineStyle}\" target=\"_blank\" rel=\"noopener noreferrer\">\n                            {$linkJudul}\n                        </a>\n";
+                $linkItems .= "                        <a href=\"{$linkUrl}\" class=\"link-button custom-styled\" style=\"{$inlineStyle}\" target=\"_blank\" rel=\"noopener noreferrer\">\n                            {$iconHtml}{$linkJudul}\n                        </a>\n";
             } else {
                 // Custom styling DISABLED - gunakan global style dari styles['button'] (EXACT method dari public.blade.php)
                 // JANGAN gunakan inline style, biarkan CSS global yang handle hover effects! (EXACT dari public.blade.php)
-                $linkItems .= "                        <a href=\"{$linkUrl}\" class=\"link-button\" target=\"_blank\" rel=\"noopener noreferrer\">\n                            {$linkJudul}\n                        </a>\n";
+                $linkItems .= "                        <a href=\"{$linkUrl}\" class=\"link-button\" target=\"_blank\" rel=\"noopener noreferrer\">\n                            {$iconHtml}{$linkJudul}\n                        </a>\n";
             }
         }
 
@@ -1589,6 +1601,7 @@ class EditTautan extends Component
     <link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin>
     <link href=\"https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap\" rel=\"stylesheet\">
     <link rel=\"icon\" href=\"images/favicon.png\" type=\"image/png\">
+    <link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css\">
     <style>
 {$css}
     </style>
@@ -2066,7 +2079,10 @@ class EditTautan extends Component
         }
 
         .link-button {
-            display: block;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
             padding: 16px 20px;
             text-decoration: none;
             border-radius: {$button['borderRadius']}px;
@@ -2078,6 +2094,11 @@ class EditTautan extends Component
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
+        }
+
+        .link-icon {
+            font-size: 18px;
+            flex-shrink: 0;
         }
 
         .link-button:hover:not(.custom-styled) {
@@ -2206,5 +2227,38 @@ class EditTautan extends Component
         }
 
         return "rgba($r, $g, $b, $opacity)";
+    }
+
+    // Icon Picker Methods
+    public function selectIcon($index)
+    {
+        $this->selectedLinkIndex = $index;
+        $this->showIconPicker = true;
+    }
+
+    public function setIcon($iconClass)
+    {
+        if ($this->selectedLinkIndex !== null) {
+            $this->links[$this->selectedLinkIndex]['icon'] = $iconClass;
+            $this->showIconPicker = false;
+            $this->selectedLinkIndex = null;
+            $this->generatePreview();
+        }
+    }
+
+    public function removeIcon()
+    {
+        if ($this->selectedLinkIndex !== null) {
+            $this->links[$this->selectedLinkIndex]['icon'] = '';
+            $this->showIconPicker = false;
+            $this->selectedLinkIndex = null;
+            $this->generatePreview();
+        }
+    }
+
+    public function closeIconPicker()
+    {
+        $this->showIconPicker = false;
+        $this->selectedLinkIndex = null;
     }
 }
