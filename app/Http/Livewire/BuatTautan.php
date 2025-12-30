@@ -948,6 +948,18 @@ class BuatTautan extends Component
         }
     }
 
+    public function reorderLinks($orderedIndexes)
+    {
+        $reorderedLinks = [];
+        foreach ($orderedIndexes as $index) {
+            if (isset($this->links[$index])) {
+                $reorderedLinks[] = $this->links[$index];
+            }
+        }
+        $this->links = $reorderedLinks;
+        $this->generatePreview();
+    }
+
     public function generatePreview()
     {
         try {

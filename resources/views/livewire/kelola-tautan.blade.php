@@ -307,6 +307,14 @@
 
                             <!-- Actions -->
                             <div class="flex items-center space-x-1 ml-4">
+                                <button wire:click="duplicateTautan({{ $tautan->id }})"
+                                    class="p-2 text-gray-400 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition-all duration-200 hover:scale-105 dark:hover:bg-purple-900/20"
+                                    title="Duplikat Tautan">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                                    </svg>
+                                </button>
+
                                 <button wire:click="showView({{ $tautan->id }})"
                                     class="p-2 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all duration-200 hover:scale-105 dark:hover:bg-indigo-900/20"
                                     title="Lihat Detail">

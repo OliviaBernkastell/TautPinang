@@ -298,9 +298,16 @@
                                 Daftar Tautan <span class="text-red-500">*</span>
                             </label>
 
+                            <div id="links-container" class="space-y-3">
                             @foreach ($links as $index => $link)
-                                <div class="p-3 mb-3 rounded-lg bg-gray-50" wire:key="link-{{ $index }}">
+                                <div class="link-item p-3 mb-3 rounded-lg bg-gray-50 cursor-move hover:bg-gray-100 transition-colors" wire:key="link-{{ $index }}" data-index="{{ $index }}" draggable="true">
                                     <div class="flex items-start gap-2">
+                                        <!-- Drag Handle -->
+                                        <div class="flex items-center cursor-grab active:cursor-grabbing pt-2">
+                                            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16"></path>
+                                            </svg>
+                                        </div>
                                         <div class="flex-1">
                                             <input type="text"
                                                 wire:model.debounce.500ms="links.{{ $index }}.judul"
@@ -380,6 +387,7 @@
                                     @enderror
                                 </div>
                             @endforeach
+                            </div>
 
                             <button type="button" wire:click="addLink"
                                 class="w-full px-4 py-2 text-gray-700 transition bg-gray-100 rounded-lg hover:bg-gray-200">
@@ -387,16 +395,21 @@
                             </button>
                         </div>
 
-                        <!-- Footer -->
+                        <!-- Footer (Locked - tidak bisa diubah) -->
                         <div class="mb-6">
-                            <label class="block mb-2 text-sm font-medium text-gray-700">Footer (Opsional)</label>
+                            <label class="block mb-2 text-sm font-medium text-gray-700">
+                                Footer
+                                <span class="ml-2 px-2 py-0.5 text-xs bg-gray-200 text-gray-600 rounded-full">
+                                    🔒 Terkunci
+                                </span>
+                            </label>
                             <div class="space-y-3">
-                                <input type="text" wire:model.debounce.300ms="footerText1"
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                <input type="text" value="{{ $footerText1 }}" readonly
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-600 cursor-not-allowed"
                                     placeholder="© 2025 Made with ❤ BPS Kota Tanjungpinang -">
-                                <input type="text" wire:model.debounce.300ms="footerText2"
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    placeholder="BPS Provinsi Kepulauan Riau">
+                                <input type="text" value="{{ $footerText2 }}" readonly
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-600 cursor-not-allowed"
+                                    placeholder="BPS Provinsi Kepulauan Riau">
                             </div>
                         </div>
 
@@ -2064,6 +2077,7 @@
             initializeOptimizedColorPickers();
             setupFileUploadHandler();
             setupSlugFormatter();
+            initializeSortableLinks();
 
             // Special handling for edit mode - update ALL color pickers with database data
             setTimeout(() => {
@@ -3518,11 +3532,85 @@ User: [PLACEHOLDER - GANTI DENGAN PERMINTAAN TEMA]`;
         console.log('🎉 Taut Pinang JavaScript fully loaded and optimized!');
 
 
+        // ===== SORTABLE LINKS (DRAG & DROP REORDER) =====
+        function initializeSortableLinks() {
+            const container = document.getElementById('links-container');
+            if (!container) return;
+
+            console.log('🔄 Initializing sortable links...');
+
+            let draggedItem = null;
+            let draggedIndex = null;
+
+            container.addEventListener('dragstart', function(e) {
+                const linkItem = e.target.closest('.link-item');
+                if (!linkItem) return;
+
+                draggedItem = linkItem;
+                draggedIndex = parseInt(linkItem.dataset.index);
+
+                linkItem.classList.add('dragging');
+                e.dataTransfer.effectAllowed = 'move';
+                e.dataTransfer.setData('text/html', linkItem.innerHTML);
+            });
+
+            container.addEventListener('dragend', function(e) {
+                const linkItem = e.target.closest('.link-item');
+                if (linkItem) {
+                    linkItem.classList.remove('dragging');
+                }
+
+                // Get new order and sync with Livewire
+                const newOrder = [];
+                container.querySelectorAll('.link-item').forEach(item => {
+                    newOrder.push(parseInt(item.dataset.index));
+                });
+
+                // Call Livewire method to reorder
+                if (typeof Livewire !== 'undefined') {
+                    @this.reorderLinks(newOrder);
+                }
+            });
+
+            container.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                const linkItem = e.target.closest('.link-item');
+                if (!linkItem || linkItem === draggedItem) return;
+
+                const bounding = linkItem.getBoundingClientRect();
+                const offset = bounding.y + (bounding.height / 2);
+
+                if (e.clientY - offset > 0) {
+                    linkItem.after(draggedItem);
+                } else {
+                    linkItem.before(draggedItem);
+                }
+            });
+
+            container.addEventListener('dragenter', function(e) {
+                e.preventDefault();
+            });
+
+            console.log('✅ Sortable links initialized');
+        }
+
+
         // ===== QR CODE COLOR SYNC SYSTEM =====
     </script>
 
     <!-- Complete CSS untuk Taut Pinang - Clean & Organized -->
     <style>
+        /* ===== SORTABLE LINKS STYLES ===== */
+        .link-item.dragging {
+            opacity: 0.5;
+            transform: scale(0.98);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+
+        .link-item {
+            transition: all 0.2s ease;
+        }
+
         /* ===== DARK MODE STYLES ===== */
 
         /* Header - Dark Mode */
