@@ -196,6 +196,7 @@ class BuatTautan extends Component
                 'judul' => 'Website Resmi BPS',
                 'url' => 'https://tanjungpinangkota.bps.go.id',
                 'icon' => '', // Font Awesome icon class - kosong secara default
+                'active' => true, // Active state
                 'enableCustomStyling' => false, // DEFAULT: DISABLED - gunakan global style
                 'backgroundColor' => '#FFFFFF', // Default white background (hanya digunakan jika enableCustomStyling = true)
                 'textColor' => '#002366'          // Default blue text (hanya digunakan jika enableCustomStyling = true)
@@ -204,6 +205,7 @@ class BuatTautan extends Component
                 'judul' => 'Data dan Statistik',
                 'url' => 'https://tanjungpinangkota.bps.go.id/subject.html',
                 'icon' => '',
+                'active' => true,
                 'enableCustomStyling' => false, // DEFAULT: DISABLED - gunakan global style
                 'backgroundColor' => '#FFFFFF',
                 'textColor' => '#002366'
@@ -212,6 +214,7 @@ class BuatTautan extends Component
                 'judul' => 'Berita Resmi',
                 'url' => 'https://tanjungpinangkota.bps.go.id/news.html',
                 'icon' => '',
+                'active' => true,
                 'enableCustomStyling' => false, // DEFAULT: DISABLED - gunakan global style
                 'backgroundColor' => '#FFFFFF',
                 'textColor' => '#002366'
@@ -940,6 +943,7 @@ class BuatTautan extends Component
             'judul' => '',
             'url' => '',
             'icon' => '', // Icon - kosong berarti tidak ada icon
+            'active' => true, // Active state - default true
             // PERBAIKAN: Toggle system untuk per-link styling
             'enableCustomStyling' => false, // DEFAULT: DISABLED - gunakan global style
             'backgroundColor' => '#FFFFFF', // Default white background (hanya digunakan jika enableCustomStyling = true)
@@ -1126,13 +1130,18 @@ class BuatTautan extends Component
             logger('🎨 QR Dark Color being saved: ' . ($this->styles['qrcode']['darkColor'] ?? 'NOT SET'));
             logger('🎨 Full QR Styles being saved: ' . json_encode($this->styles['qrcode'] ?? []));
 
-            // ✅ SIMPAN KE DATABASE
+            // ✅ SIMPAN KE DATABASE - Simpan SEMUA links (termasuk yang inactive)
+            // Filter hanya link yang punya judul dan url (tapi boleh inactive)
+            $linksToSave = array_values(array_filter($this->links, function ($link) {
+                return !empty($link['judul']) && !empty($link['url']);
+            }));
+
             $tautan = Tautan::create([
                 'user_id' => Auth::id(),
                 'title' => $this->judul,
                 'description' => $this->deskripsi,
                 'slug' => $this->slug,
-                'links' => array_values($validLinks),
+                'links' => $linksToSave,
                 'styles' => $this->styles,
                 'logo_url' => $logoPath,
                 'judul_gambar' => $judulGambar,
@@ -1167,7 +1176,9 @@ class BuatTautan extends Component
     private function getValidLinks()
     {
         return array_filter($this->links, function ($link) {
-            return !empty($link['judul']) && !empty($link['url']);
+            // Filter link yang: ada judul, ada url, dan active = true
+            $isActive = $link['active'] ?? true; // Default true untuk backward compatibility
+            return !empty($link['judul']) && !empty($link['url']) && $isActive;
         });
     }
 

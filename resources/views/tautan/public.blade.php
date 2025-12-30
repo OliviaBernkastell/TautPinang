@@ -659,7 +659,11 @@
         <div class="links">
             @if (!empty($tautan->links) && is_array($tautan->links))
                 @foreach ($tautan->links as $link)
-                    @if (!empty($link['judul']) && !empty($link['url']))
+                    @php
+                        // Cek active state - default true untuk backward compatibility
+                        $isActive = $link['active'] ?? true;
+                    @endphp
+                    @if (!empty($link['judul']) && !empty($link['url']) && $isActive)
                         @php
                             // Gunakan logika yang SAMA seperti EditTautan->buildHtml()
                             $enableCustomStyling = $link['enableCustomStyling'] ?? false;

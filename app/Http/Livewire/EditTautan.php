@@ -1293,12 +1293,17 @@ class EditTautan extends Component
             logger('🎨 QR Dark Color being saved: ' . ($this->styles['qrcode']['darkColor'] ?? 'NOT SET'));
             logger('🎨 Full QR Styles being saved: ' . json_encode($this->styles['qrcode'] ?? []));
 
-            // ✅ UPDATE DATA DI DATABASE
+            // ✅ UPDATE DATA DI DATABASE - Simpan SEMUA links (termasuk yang inactive)
+            // Filter hanya link yang punya judul dan url (tapi boleh inactive)
+            $linksToSave = array_values(array_filter($this->links, function ($link) {
+                return !empty($link['judul']) && !empty($link['url']);
+            }));
+
             $tautan->update([
                 'title' => $this->judul,
                 'description' => $this->deskripsi,
                 'slug' => $this->slug,
-                'links' => array_values($validLinks),
+                'links' => $linksToSave,
                 'styles' => $this->styles,
                 'logo_url' => $logoPath,
                 'judul_gambar' => $judulGambar,
@@ -1330,7 +1335,9 @@ class EditTautan extends Component
     private function getValidLinks()
     {
         return array_filter($this->links, function ($link) {
-            return !empty($link['judul']) && !empty($link['url']);
+            // Filter link yang: ada judul, ada url, dan active = true
+            $isActive = $link['active'] ?? true; // Default true untuk backward compatibility
+            return !empty($link['judul']) && !empty($link['url']) && $isActive;
         });
     }
 

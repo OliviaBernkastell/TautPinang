@@ -391,6 +391,38 @@
                                                     </div>
                                                 </div>
                                             @endif
+
+                                            <!-- Icon & Active Toggle (Inline) -->
+                                            @php
+                                                $isActive = ($link['active'] ?? true);
+                                            @endphp
+                                            <div class="flex items-center gap-2 mt-3">
+                                                <!-- Icon Picker -->
+                                                @if(!empty($link['icon']))
+                                                    <button type="button" wire:click="selectIcon({{ $index }})"
+                                                        class="px-3 py-2 bg-purple-100 text-purple-700 text-sm rounded-lg hover:bg-purple-200 transition-colors border border-purple-300">
+                                                        <i class="{{ $link['icon'] }} mr-1"></i> Ganti
+                                                    </button>
+                                                    <button type="button" wire:click="removeIcon({{ $index }})"
+                                                        class="px-3 py-2 bg-red-100 text-red-700 text-sm rounded-lg hover:bg-red-200 transition-colors border border-red-300">
+                                                        <i class="fas fa-times"></i>
+                                                    </button>
+                                                @else
+                                                    <button type="button" wire:click="selectIcon({{ $index }})"
+                                                        class="px-3 py-2 bg-purple-600 text-white text-sm rounded-lg hover:bg-purple-700 transition-colors">
+                                                        <i class="fas fa-icons mr-1"></i> Icon
+                                                    </button>
+                                                @endif
+
+                                                <!-- Active Toggle Switch -->
+                                                <label class="flex items-center cursor-pointer">
+                                                    <input type="checkbox"
+                                                        wire:model.debounce.500ms="links.{{ $index }}.active"
+                                                        class="sr-only peer">
+                                                    <div class="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
+                                                    <span class="ml-3 text-sm font-medium text-gray-700">Aktif</span>
+                                                </label>
+                                            </div>
                                         </div>
                                         <button type="button" wire:click="removeLink({{ $index }})"
                                             class="p-2 text-red-500 transition rounded-lg hover:bg-red-50">
